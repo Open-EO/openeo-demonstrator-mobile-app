@@ -52,7 +52,7 @@ iOS:
   script:
     - mkdir -p ./www
     - npm run ionic cordova prepare -- --no-interactive
-    - npm run build-ios -- --developmentTeam="${IOS_BUILD_TEAM}"
+    - npm run package-ios -- --developmentTeam="${IOS_BUILD_TEAM}"
   tags:
     - macos
   artifacts:

@@ -1,0 +1,34 @@
+language: node_js
+dist: bionic
+node_js:
+  - 11
+stages:
+  - test
+  - build
+before_script:
+  - mkdir -p ./www
+script: skip
+jobs:
+  include:
+    - stage: test
+      addons:
+        chrome: stable
+      services:
+        - xvfb
+      script: npm run test -- --no-watch
+    - script: npm run prettier:check
+    - stage: build
+      os: osx
+      script: npm run build-ios
+    - language: android
+      dist: trusty
+      android:
+        components:
+          - build-tools-28.0.3
+          - android-28
+      before_install:
+        - nvm install 11
+        - node --version
+      install:
+        - npm ci
+      script: npm run build-android
