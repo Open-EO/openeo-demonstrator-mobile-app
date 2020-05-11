@@ -1,0 +1,49 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button></ion-back-button>
+        </ion-buttons>
+        <ion-title>{{ provider?.name }}</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+    <h2>{{ capabilities?.title() }}</h2>
+
+    <ion-card class="ion-no-margin" *ngIf="provider.isAvailable" color="light">
+        <ion-card-content>
+            <p *ngIf="provider?.collectionId">
+                You are currently using the collection <strong>"{{ provider?.collectionId }}"</strong> for processing on this backend.
+            </p>
+            <p *ngIf="!provider?.collectionId">
+                You have not yet defined which collection to use for processing. Please select one in the list of collections.
+            </p>
+        </ion-card-content>
+    </ion-card>
+
+    <p [innerHTML]="description"></p>
+    <p>
+        <strong>API version:</strong> {{ capabilities?.apiVersion() }}<br>
+        <strong>Backend version:</strong> {{ capabilities?.backendVersion() }}
+    </p>
+    <h2>Custom data</h2>
+    <ion-button expand="block" routerLink="/tabs/open-eo/provider-info/jobs" routerDirection="forward">
+        Stored jobs
+    </ion-button>
+    <h2>Detailed API information</h2>
+    <ion-button expand="block" routerLink="/tabs/open-eo/provider-info/capabilities" routerDirection="forward">
+        Full capabilities
+    </ion-button>
+    <ion-button expand="block" routerLink="/tabs/open-eo/provider-info/collections" routerDirection="forward" [disabled]="!provider?.isAvailable">
+        Collections
+    </ion-button>
+    <ion-button expand="block" routerLink="/tabs/open-eo/provider-info/processes" routerDirection="forward" [disabled]="!provider?.isAvailable">
+        Processes
+    </ion-button>
+    <ion-button expand="block" routerLink="/tabs/open-eo/provider-info/file-types" routerDirection="forward" [disabled]="!provider?.isAvailable">
+        File types
+    </ion-button>
+    <h2 *ngIf="(provider?.isAvailable && !provider.isPublic) || !provider?.isDefault">Manage</h2>
+    <ion-button *ngIf="provider?.isAvailable && !provider?.isPublic" expand="block" color="warning" (click)="signOut()">Sign out</ion-button>
+    <ion-button *ngIf="!provider?.isDefault" expand="block" color="danger" (click)="remove()">Remove</ion-button>
+</ion-content>

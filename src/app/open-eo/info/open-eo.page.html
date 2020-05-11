@@ -1,0 +1,122 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title>General information</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+    <div class="openeo-logo">
+        <img src="/assets/openeo_logo.png" align="center" alt="openEO">
+    </div>
+    <p>
+        Earth Observation data are becoming too large to be downloaded locally for analysis. Also, the way they are organised (as tiles, or granules: files containing the imagery for a small part of the Earth and a single observation date) makes it unnecessary complicated to analyse them. The solution to this is to store these data in the cloud, on compute back-ends, process them there, and browse the results or download resulting figures or numbers. But how do we do that?
+    </p>
+    <p>
+        openEO develops an open application programming interface (API) that connects clients like R, Python and JavaScript to big Earth observation cloud back-ends in a simple and unified way.
+    </p>
+    <p>
+        With such an API,
+    </p>
+    <ul>
+        <li>each client can work with every back-end, and</li>
+        <li>it becomes possible to compare back-ends in terms of capacity, cost, and results (validation,
+            reproducibility)
+        </li>
+    </ul>
+    <p>
+        Read more on the openEO project on <a href="https://openeo.org/" target="_blank">openeo.org</a>.
+    </p>
+
+    <h2>Manage providers</h2>
+    <ion-list class="no-space-right ion-no-padding ion-no-margin">
+        <ion-item *ngFor="let server of servers$ | async" lines="none"
+                  class="no-space-right ion-no-padding ion-no-margin">
+            <ion-label>{{ server.name }}</ion-label>
+            <div slot="end" class="ion-no-margin">
+
+                <ion-button color="secondary" size="small" (click)="providerInfo(server)">
+                    Info
+                </ion-button>
+                <ion-button *ngIf="!server.isPublic && !server.isAvailable" size="small"
+                            (click)="providerAuthenticate(server)">
+                    Sign in
+                </ion-button>
+                <ion-button *ngIf="server.isAvailable" size="small" [innerText]="server.isActive ? 'Disable' : 'Enable'"
+                            [color]="server.isActive ? 'danger' : 'success'"
+                            (click)="toggleProvider(server)">
+                </ion-button>
+            </div>
+        </ion-item>
+    </ion-list>
+    <ion-button size="block" color="secondary" routerLink="/tabs/open-eo/add-provider" routerDirection="forward">Add
+        provider
+    </ion-button>
+
+    <h2>Credits</h2>
+    <div class="credit">
+        <div class="credit-logo">
+            <p><img src="/assets/cesiumjs_color_white.png" alt="CesiumJS"></p>
+        </div>
+        <div class="credit-text">
+            <p>The map on the home screen is powered by <a href="https://cesium.com/" target="_blank">cesiumJS</a>.</p>
+        </div>
+    </div>
+
+    <div class="credit">
+        <div class="credit-logo">
+            <p>
+                <a
+                        style="background-color:black;color:white;text-decoration:none;padding:4px 6px;font-family:-apple-system, BlinkMacSystemFont, 'San Francisco', 'Helvetica Neue', Helvetica, Ubuntu, Roboto, Noto, 'Segoe UI', Arial, sans-serif;font-size:12px;font-weight:bold;line-height:1.2;display:inline-block;border-radius:3px"
+                        href="https://unsplash.com/@vklemen?utm_medium=referral&amp;utm_campaign=photographer-credit&amp;utm_content=creditBadge"
+                        target="_blank" rel="noopener noreferrer"
+                        title="Download free do whatever you want high-resolution photos from Klemen Vrankar"><span
+                        style="display:inline-block;padding:2px 3px"><svg xmlns="http://www.w3.org/2000/svg"
+                                                                          style="height:12px;width:auto;position:relative;vertical-align:middle;top:-2px;fill:white"
+                                                                          viewBox="0 0 32 32"><title>unsplash-logo</title><path
+                        d="M10 9V0h12v9H10zm12 5h10v18H0V14h10v9h12v-9z"></path></svg></span></a>
+            </p>
+        </div>
+        <div class="credit-text">
+            <p>
+                The app background image is a photo taken by
+                <a
+                        style="background-color:black;color:white;text-decoration:none;padding:4px 6px;font-family:-apple-system, BlinkMacSystemFont, 'San Francisco', 'Helvetica Neue', Helvetica, Ubuntu, Roboto, Noto, 'Segoe UI', Arial, sans-serif;font-size:12px;font-weight:bold;line-height:1.2;display:inline-block;border-radius:3px"
+                        href="https://unsplash.com/@vklemen?utm_medium=referral&amp;utm_campaign=photographer-credit&amp;utm_content=creditBadge"
+                        target="_blank" rel="noopener noreferrer"
+                        title="Download free do whatever you want high-resolution photos from Klemen Vrankar"><span
+                        style="display:inline-block;padding:2px 3px"><svg xmlns="http://www.w3.org/2000/svg"
+                                                                          style="height:12px;width:auto;position:relative;vertical-align:middle;top:-2px;fill:white"
+                                                                          viewBox="0 0 32 32"><title>unsplash-logo</title><path
+                        d="M10 9V0h12v9H10zm12 5h10v18H0V14h10v9h12v-9z"></path></svg></span><span
+                        style="display:inline-block;padding:2px 3px">Klemen Vrankar</span></a>
+                and released on unsplash.
+            </p>
+        </div>
+    </div>
+
+    <div class="credit">
+        <div class="credit-logo">
+        </div>
+        <div class="credit-text">
+            <p><a href="https://s2maps.eu" target="_blank">Sentinel-2 cloudless - https://s2maps.eu</a> by <a href="https://eox.at" target="_blank">EOX IT Services GmbH</a> (Contains modified Copernicus Sentinel data 2016 & 2017)</p>
+        </div>
+    </div>
+
+    <h2>Funding</h2>
+    <div class="credit">
+        <div class="credit-logo">
+            <p><img src="/assets/eu.jpg" alt="European Union"></p>
+        </div>
+        <div class="credit-text">
+            <p>
+                This project has received funding from the European Union’s Horizon 2020 research and innovation
+                programme under grant agreement No 776242.<br>
+                This publication only reflects the author's views; the European Commission is not responsible for any
+                use that may be made of the information it contains.
+            </p>
+        </div>
+    </div>
+
+    <h2>Reset the app</h2>
+    <ion-button size="block" color="secondary" (click)="onReset()">Reset everything</ion-button>
+</ion-content>

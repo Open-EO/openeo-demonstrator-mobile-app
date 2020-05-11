@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Jobs</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ng-container *ngIf="jobs === null; else list">
+    <app-loading-indicator text="Loading jobs..."></app-loading-indicator>
+  </ng-container>
+</ion-content>
+
+<ng-template #list>
+  <ion-list *ngIf="jobs.length > 0; else noentries">
+    <ng-container *ngFor="let job of jobs">
+      <ion-item>
+        <ion-label class="ion-text-wrap">
+          <h3>{{ job.title }}</h3>
+          <p>{{ job.description }}</p>
+          <p>Status: {{ job.status }}</p>
+        </ion-label>
+      </ion-item>
+    </ng-container>
+  </ion-list>
+</ng-template>
+
+<ng-template #noentries>
+  <p>No batch jobs currently available in your account.</p>
+</ng-template>

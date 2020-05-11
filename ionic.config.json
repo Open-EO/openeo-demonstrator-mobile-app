@@ -1,0 +1,7 @@
+{
+  "name": "openEOTest",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}

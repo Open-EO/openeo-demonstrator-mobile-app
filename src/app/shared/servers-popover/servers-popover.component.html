@@ -1,0 +1,11 @@
+<div class="server-list-wrapper">
+  <ion-list class="ion-no-padding ion-no-margin">
+    <strong>Active data providers</strong>
+    <ion-item *ngFor="let server of servers$ | async" lines="none" (click)="toggleProvider(server)" class="no-space-right ion-no-padding">
+      <ion-label>{{ server.name }}</ion-label>
+      <ion-button size="small" [innerText]="server.isActive ? 'Disable' : 'Enable'" [color]="server.isActive ? 'danger' : 'success'"></ion-button>
+    </ion-item>
+  </ion-list>
+
+  <ion-button size="block" color="secondary" (click)="manage()">Manage providers</ion-button>
+</div>

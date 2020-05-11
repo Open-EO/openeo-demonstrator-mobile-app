@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ collection?.title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h2>{{ collection.id }}</h2>
+  <p *ngIf="provider.collectionId !== collection.id">
+    <ion-button size="block" (click)="useCollection()">Use this collection</ion-button>
+  </p>
+  <p *ngIf="provider.collectionId === collection.id">
+    <ion-button size="block" disabled="true">You are currently using this collection</ion-button>
+  </p>
+  <p>
+    {{ collection.description }}
+  </p>
+  <p>
+    <strong>Spacial extent:</strong><br>
+    <ng-container *ngIf="collection.extent.spatial.length === 4">
+      {{ collection.extent.spatial[0] }}° W, {{ collection.extent.spatial[1] }}° S, {{ collection.extent.spatial[2] }}°E, {{ collection.extent.spatial[3] }}°N
+    </ng-container>
+  </p>
+  <p>
+    <strong>Temporal extent:</strong><br>
+    From {{ collection.extent.temporal[0] || 'the beginning of time' }} until {{ collection.extent.temporal[1] || 'today' }}
+  </p>
+  <p>
+    <strong>License:</strong><br>
+    {{ collection.license }}
+  </p>
+  <p>
+    <ng-container *ngFor="let link of collection.links">
+      <a href="{{ link.href }}" title="{{ link.title }}">{{ link.title }}</a><br>
+    </ng-container>
+  </p>
+  <app-code [code]="collection"></app-code>
+</ion-content>

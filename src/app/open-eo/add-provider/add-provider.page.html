@@ -1,0 +1,14 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button></ion-back-button>
+        </ion-buttons>
+        <ion-title>Add custom provider</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+    <ion-input placeholder="Name" [(ngModel)]="provider.name" type="text" required="true"></ion-input>
+    <ion-input placeholder="URL" [(ngModel)]="provider.url" type="url" required="true"></ion-input>
+    <ion-button size="block" color="primary" (click)="save()">Save</ion-button>
+</ion-content>

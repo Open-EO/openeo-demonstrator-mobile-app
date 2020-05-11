@@ -1,0 +1,50 @@
+<ion-content>
+    <div slot="fixed" class="fixed-container">
+        <div class="safe-area"></div>
+        <app-interest-search class="search-bar"></app-interest-search>
+        <div class="map">
+            <app-map [interest]="selectedInterest" [canvas]="dataObjectURL"></app-map>
+        </div>
+        <div class="map-loading" *ngIf="selectedInterest && !dataObjectURL">
+            <app-loading-indicator text="Please wait while we fetch the latest data for you..."></app-loading-indicator>
+        </div>
+        <app-color-scale-legend></app-color-scale-legend>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="data-section-wrapper ion-padding" [class.has-data]="selectedInterest"
+             (swiperight)="onSwipeRight($event)" (swipeleft)="onSwipeLeft($event)">
+            <div class="data-section" *ngIf="!selectedInterest">
+                Please select a location of interest.
+            </div>
+            <div class="data-section" *ngIf="selectedInterest">
+                <div class="data-header">
+                    <div class="title">
+                        <h1>{{ selectedInterest.osmLocation.name }}</h1>
+                        <p>
+                            {{ selectedInterest.osmLocation.latitude }}°N
+                            {{ selectedInterest.osmLocation.longitude }}°E
+                        </p>
+                    </div>
+                    <div class="actions">
+                        <ion-button fill="clear" (click)="onFavorise()">
+                            <ion-icon
+                                    name="star-outline"
+                                    [attr.name]="
+                  selectedInterest.isFavorite ? 'star' : 'star-outline'
+                "
+                            ></ion-icon>
+                        </ion-button>
+                    </div>
+                </div>
+
+                <app-index-slider></app-index-slider>
+
+                <div class="data-content">
+                    <h2>{{ currentIndex?.title }}</h2>
+                    <div [innerHtml]="currentIndex?.description"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ion-content>

@@ -1,0 +1,7 @@
+<ion-item (click)="onSelectItem(interest)" detail="true" button="false" class="ion-no-padding">
+  <ion-label>
+    <h2>{{ interest.osmLocation.name }}</h2>
+    <h3>{{ interest.osmLocation.region }}</h3>
+    <p>{{ adminLevels[interest.osmLocation.adminLevel] }}</p>
+  </ion-label>
+</ion-item>

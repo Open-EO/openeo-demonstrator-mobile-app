@@ -1,0 +1,11 @@
+<div class="index-slider">
+  <span class="slider-prev">
+    <ion-icon name="arrow-back" (click)="onPrevious()"></ion-icon>
+  </span>
+  <ion-icon *ngFor="let item of (selectedInterest$ | async).availableIndices; let i = index"
+    [name]="i === currentIndexId ? 'radio-button-on' : 'radio-button-off'"
+  ></ion-icon>
+  <span class="slider-next">
+    <ion-icon name="arrow-forward" (click)="onNext()"></ion-icon>
+  </span>
+</div>

@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Processes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ng-container *ngIf="processes === null; else processesList">
+    <app-loading-indicator text="Loading processes..."></app-loading-indicator>
+  </ng-container>
+</ion-content>
+
+<ng-template #processesList>
+  <ion-list>
+    <ng-container *ngFor="let process of processes.processes">
+      <ion-item *ngIf="process.id" detail="true" button="false" class="ion-no-padding">
+        <ion-label class="ion-text-wrap">
+          <h3>{{ process.id }}</h3>
+          <p *ngIf="process.summary">{{ process.summary }}</p>
+        </ion-label>
+      </ion-item>
+    </ng-container>
+  </ion-list>
+</ng-template>

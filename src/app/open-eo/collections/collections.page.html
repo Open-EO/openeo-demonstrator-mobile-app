@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Collections</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ng-container *ngIf="filteredCollections === null; else collectionsList">
+    <app-loading-indicator text="Loading collections..."></app-loading-indicator>
+  </ng-container>
+</ion-content>
+
+<ng-template #collectionsList>
+  <ion-searchbar slot="fixed" (ionChange)="onFilter($event)"></ion-searchbar>
+  <ion-list class="filtered-list">
+    <ng-container *ngFor="let collection of filteredCollections">
+      <ion-item (click)="onSelect(collection)" *ngIf="collection.id" detail="true" button="false" class="ion-no-padding">
+        <ion-label class="ion-text-wrap">
+          <h3>{{ collection.id }}</h3>
+          <p>{{ collection.title }}</p>
+        </ion-label>
+      </ion-item>
+    </ng-container>
+  </ion-list>
+</ng-template>

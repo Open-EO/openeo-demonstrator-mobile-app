@@ -1,0 +1,32 @@
+<div class="interest-search-wrapper">
+  <div class="search-toolbar">
+    <ion-searchbar
+      (ionChange)="onSearch($event)"
+      (ionClear)="clearSearch()"
+      (ionFocus)="isSearching = true"
+      (ionBlur)="isSearching = false"
+      debounce="300"
+    ></ion-searchbar>
+    <ion-button color="dark" [class.searching]="isSearching" (click)="onServersPopover($event)"><ion-icon name="planet"></ion-icon></ion-button>
+  </div>
+  <div class="search-content-wrapper ion-padding" *ngIf="contentVisible">
+    <div class="search-content">
+      <ng-container *ngIf="isBusy">
+        <ion-spinner></ion-spinner>
+      </ng-container>
+      <ng-container *ngIf="!isBusy && searchResults.length === 0">
+        <p>No results were found matching your search.</p>
+      </ng-container>
+      <ion-list inset="false" *ngIf="isBusy === false">
+        <ng-container>
+          <app-interest-list-item
+            *ngFor="let interest of searchResults"
+            [interest]="interest"
+            (selected)="onSelectItem($event)"
+          >
+          </app-interest-list-item>
+        </ng-container>
+      </ion-list>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Supported file types</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ng-container *ngFor="let fileType of fileTypes | keyvalue">
+    <p>
+      <strong>{{ fileType.key }}</strong>
+    </p>
+    <ng-container *ngIf="fileType.value.gis_data_types">
+      GIS data types:
+      <ul>
+        <li *ngFor="let dataType of fileType.value.gis_data_types">{{ dataType }}</li>
+      </ul>
+    </ng-container>
+    <ng-container *ngIf="fileType.value.parameters">
+      Parameters:
+      <app-code [code]="fileType.value.parameters"></app-code>
+    </ng-container>
+  </ng-container>
+</ion-content>

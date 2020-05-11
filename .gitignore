@@ -1,0 +1,102 @@
+
+# Created by https://www.gitignore.io/api/macos,ionic3,windows,visualstudiocode
+# Edit at https://www.gitignore.io/?templates=macos,ionic3,windows,visualstudiocode
+
+### Ionic3 ###
+# Log an tmp data
+*~
+*.sw[mnpcod]
+*.log
+*.tmp
+*.tmp.*
+log.txt
+
+# NPM (Node Package Manager) files
+npm-debug.log*
+node_modules/
+tmp/
+temp/
+
+# Preprocessors cache files
+.sourcemaps/
+.sass-cache/
+.tmp/
+hooks/
+
+# Ionic 3 plugins files
+platforms/
+plugins/
+plugins/android.json
+plugins/ios.json
+www/
+
+# Trash data
+$RECYCLE.BIN/
+.DS_Store
+Thumbs.db
+UserInterfaceState.xcuserstate
+
+### macOS ###
+# General
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+
+### Windows ###
+# Windows thumbnail cache files
+ehthumbs.db
+ehthumbs_vista.db
+
+# Dump file
+*.stackdump
+
+# Folder config file
+[Dd]esktop.ini
+
+# Recycle Bin used on file shares
+
+# Windows Installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# End of https://www.gitignore.io/api/macos,ionic3,windows,apachecordova,visualstudiocode
+
+/dist
+/output
+.gradle
+.idea/
