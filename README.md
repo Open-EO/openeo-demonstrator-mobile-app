@@ -1,5 +1,7 @@
 # openEO Demonstrator Mobile App
 
+[![Build Status](https://travis-ci.org/Open-EO/openeo-demonstrator-mobile-app.svg?branch=master)](https://travis-ci.org/Open-EO/openeo-demonstrator-mobile-app)
+
 This is the Android and iOS mobile app demonstrating the possible application of openEO in a mobile environment. It offers requesting
 various EO indices from the backend servers listed on the [openEO Hub](https://hub.openeo.org/) (some might require a 
 valid subscription to be used) and also allows accessing custom servers supporting the openEO API in the same way.
