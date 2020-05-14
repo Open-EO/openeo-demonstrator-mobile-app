@@ -40,6 +40,11 @@ export class EOIndex {
         this.key = key;
     }
 
+    /**
+     * Generates a D3js color scale using the colors and steps defined for the index in the
+     * environment files. The color scale can then be used to map a value in the domain
+     * (usually 0-255) to an RGB value to color the results.
+     */
     public generateScale(): any {
         const max = Math.max(...this.colorScale.domain);
         const domain = [];

@@ -89,6 +89,17 @@ export class DataProviderState implements NgxsOnInit {
         ctx.dispatch(new LoadDataProviders());
     }
 
+    /**
+     * The list of data providers in the app is a combination of 3 sources:
+     *   - the default providers from the environment files
+     *   - the providers loaded from the openEO Hub
+     *   - custom providers and previously used providers from any of the other two sources
+     *
+     * This action loads the data providers from all three sources and combines
+     * them to the final list shown and used in the app.
+     *
+     * @param ctx
+     */
     @Action(LoadDataProviders)
     public async loadDataProviders(ctx: StateContext<DataProviderStateModel>) {
         const defaultProviders = await this.service.getDefaultProviders();

@@ -29,6 +29,7 @@ import { IndexData } from './index-data';
 import { CacheIndexData } from '../interest/interest.actions';
 import * as d3 from 'd3';
 import { CustomMessageError } from '../error/custom-message-error';
+import { DataProvider } from '../data-provider/data-provider';
 
 @Injectable({
     providedIn: 'root'
@@ -36,11 +37,30 @@ import { CustomMessageError } from '../error/custom-message-error';
 export class OpenEOService {
     private renderer: Renderer2;
 
-    constructor(
+    public constructor(
         private store: Store,
         private rendererFactory: RendererFactory2
     ) {
         this.renderer = rendererFactory.createRenderer(null, null);
+    }
+
+    private static getResolutionForLocation(
+        location: OpenstreetmapLocation
+    ): number {
+        const distanceLong = distanceLongitude(
+            location.boundingBox.minLongitude,
+            location.boundingBox.maxLongitude,
+            Math.max(
+                Math.abs(location.boundingBox.minLatitude),
+                Math.abs(location.boundingBox.maxLatitude)
+            )
+        );
+        const distanceLat = distanceLatitude(
+            location.boundingBox.minLatitude,
+            location.boundingBox.maxLatitude
+        );
+
+        return Math.round(Math.min(distanceLong / 1000, distanceLat / 1000));
     }
 
     public async validateProcessGraph(
@@ -73,70 +93,27 @@ export class OpenEOService {
         const endDate = dateOfTodayWithoutTime();
         const startDate = dateOfTodayWithoutTime();
         startDate.setDate(endDate.getDate() - 10);
-
-        const distanceLong = distanceLongitude(
-            location.boundingBox.minLongitude,
-            location.boundingBox.maxLongitude,
-            Math.max(
-                Math.abs(location.boundingBox.minLatitude),
-                Math.abs(location.boundingBox.maxLatitude)
-            )
-        );
-        const distanceLat = distanceLatitude(
-            location.boundingBox.minLatitude,
-            location.boundingBox.maxLatitude
-        );
-        const resolution = Math.round(
-            Math.min(distanceLong / 1000, distanceLat / 1000)
-        );
-
-        // TODO: figure out which dataset to use for the selected backend(s)
-
         const indexData = new IndexData(index, location, startDate, endDate);
 
         if (cache.has(indexData.cacheId)) {
             return cache.get(indexData.cacheId);
         }
 
-        let dataProviderToUse = null;
-        let processGraph = null;
+        const computeDetails = await this.findProvider(
+            index,
+            dataProviders,
+            startDate,
+            endDate,
+            location
+        );
 
-        for (let i = 0; i < dataProviders.length; i++) {
-            if (!dataProviders[i].collectionId) {
-                continue;
-            }
-
-            processGraph = index.processGraph(
-                dataProviders[i].collectionId,
-                startDate,
-                endDate,
-                location.boundingBox,
-                JSON.parse(location.geoJson),
-                resolution
-            );
-
-            const errors = await this.validateProcessGraph(
-                dataProviders[i].connection,
-                processGraph
-            );
-
-            if (errors.length === 0) {
-                dataProviderToUse = dataProviders[i];
-                break;
-            } else {
-                console.warn([
-                    'Invalid process graph',
-                    dataProviders[i],
-                    processGraph,
-                    errors
-                ]);
-            }
-        }
-
-        if (dataProviderToUse !== null && processGraph !== null) {
+        if (
+            computeDetails.dataProvider !== null &&
+            computeDetails.processGraph !== null
+        ) {
             indexData.data = await this.compute(
-                dataProviderToUse.connection,
-                processGraph
+                computeDetails.dataProvider.connection,
+                computeDetails.processGraph
             );
             indexData.canvas = await this.blobToRaster(index, indexData.data);
             this.store.dispatch(new CacheIndexData(indexData));
@@ -201,5 +178,65 @@ export class OpenEOService {
         }
 
         return imageData;
+    }
+
+    /**
+     * Builds the process graph per provider and checks each provider if it supports the computation.
+     * The first data provider found to validate the process graph will be returned, together with the
+     * corresponding process graph to be used.
+     *
+     * @param index
+     * @param dataProviders
+     * @param startDate
+     * @param endDate
+     * @param location
+     */
+    private async findProvider(
+        index: EOIndex,
+        dataProviders: DataProvider[],
+        startDate: Date,
+        endDate: Date,
+        location: OpenstreetmapLocation
+    ): Promise<{ dataProvider: DataProvider; processGraph: any }> {
+        const resolution = OpenEOService.getResolutionForLocation(location);
+        let dataProviderToUse = null;
+        let processGraph = null;
+
+        for (let i = 0; i < dataProviders.length; i++) {
+            if (!dataProviders[i].collectionId) {
+                continue;
+            }
+
+            processGraph = index.processGraph(
+                dataProviders[i].collectionId,
+                startDate,
+                endDate,
+                location.boundingBox,
+                JSON.parse(location.geoJson),
+                resolution
+            );
+
+            const errors = await this.validateProcessGraph(
+                dataProviders[i].connection,
+                processGraph
+            );
+
+            if (errors.length === 0) {
+                dataProviderToUse = dataProviders[i];
+                break;
+            } else {
+                console.warn([
+                    'Invalid process graph',
+                    dataProviders[i],
+                    processGraph,
+                    errors
+                ]);
+            }
+        }
+
+        return {
+            dataProvider: dataProviderToUse,
+            processGraph: processGraph
+        };
     }
 }

@@ -17,6 +17,11 @@
 import { EOIndex } from '../open-eo/eo-index';
 import { OpenstreetmapLocation } from '../openstreetmap/openstreetmap-location';
 
+/**
+ * Represents an area/location of interest. To prevent confusions with the
+ * location class describing an openstreetmap location, this class was renamed
+ * to "Interest".
+ */
 export class Interest {
     osmLocation: OpenstreetmapLocation;
     isFavorite = false;

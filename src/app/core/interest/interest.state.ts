@@ -43,6 +43,7 @@ import { IndexData } from '../open-eo/index-data';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { rotatingClamp } from '../utils';
 import { Platform } from '@ionic/angular';
+import { environment } from '../../../environments/environment';
 
 export interface InterestStateModel {
     interests: Interest[];
@@ -56,7 +57,7 @@ export interface InterestStateModel {
 @State<InterestStateModel>({
     name: 'interest',
     defaults: {
-        interests: [],
+        interests: [], // recently loaded interests
         selected: null,
         currentIndexId: 0,
         currentIndex: null,
@@ -187,14 +188,12 @@ export class InterestState implements NgxsOnInit {
             interest = await this.service.getLocation(action.osmId);
         }
 
-        interest.availableIndices = [
-            new EOIndex('trueColor'),
-            new EOIndex('ndvi'),
-            new EOIndex('ndsi'),
-            new EOIndex('agriculture'),
-            new EOIndex('ndwi'),
-            new EOIndex('ndbi')
-        ];
+        interest.availableIndices = [];
+        for (let i = 0; i < environment.openEO.indices.indexOrder.length; i++) {
+            interest.availableIndices.push(
+                new EOIndex(environment.openEO.indices.indexOrder[i])
+            );
+        }
 
         originalInterests.unshift(interest);
         ctx.patchState({

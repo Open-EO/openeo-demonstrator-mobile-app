@@ -16,7 +16,7 @@
 <ng-template #processesList>
   <ion-list>
     <ng-container *ngFor="let process of processes.processes">
-      <ion-item *ngIf="process.id" detail="true" button="false" class="ion-no-padding">
+      <ion-item *ngIf="process.id" detail="false" button="false" class="ion-no-padding">
         <ion-label class="ion-text-wrap">
           <h3>{{ process.id }}</h3>
           <p *ngIf="process.summary">{{ process.summary }}</p>

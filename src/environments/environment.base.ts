@@ -39,6 +39,14 @@ export const environment = {
             }
         ],
         indices: {
+            indexOrder: [
+                'trueColor',
+                'ndvi',
+                'ndsi',
+                'agriculture',
+                'ndwi',
+                'ndbi'
+            ],
             ndvi: {
                 title: 'Normalized Difference Vegetation Index (NDVI)',
                 processGraph: ndvi,
