@@ -26,117 +26,119 @@ export function ndwi(
     resolution: number
 ): any {
     return {
-        dc: {
-            process_id: 'load_collection',
-            arguments: {
-                id: collection,
-                spatial_extent: {
-                    west: boundingBox.minLongitude,
-                    east: boundingBox.maxLongitude,
-                    north: boundingBox.maxLatitude,
-                    south: boundingBox.minLatitude
-                },
-                temporal_extent: [
-                    formatDate(startDate, 'yyyy-MM-dd', 'en'),
-                    formatDate(endDate, 'yyyy-MM-dd', 'en')
-                ],
-                bands: ['B8', 'B3']
-            }
-        },
-        filter: {
-            process_id: 'filter_polygon',
-            arguments: {
-                data: {
-                    from_node: 'dc'
-                },
-                polygons: geoJson
-            }
-        },
-        nir: {
-            process_id: 'filter_bands',
-            arguments: {
-                data: {
-                    from_node: 'filter'
-                },
-                bands: ['B8']
-            }
-        },
-        swir: {
-            process_id: 'filter_bands',
-            arguments: {
-                data: {
-                    from_node: 'filter'
-                },
-                bands: ['B3']
-            }
-        },
-        diff: {
-            process_id: 'normalized_difference',
-            arguments: {
-                band1: {
-                    from_node: 'nir'
-                },
-                band2: {
-                    from_node: 'swir'
+        process_graph: {
+            dc: {
+                process_id: 'load_collection',
+                arguments: {
+                    id: collection,
+                    spatial_extent: geoJson,
+                    temporal_extent: [
+                        formatDate(startDate, 'yyyy-MM-dd', 'en'),
+                        formatDate(endDate, 'yyyy-MM-dd', 'en')
+                    ],
+                    bands: ['B8', 'B3']
                 }
-            }
-        },
-        reduce: {
-            process_id: 'reduce',
-            arguments: {
-                data: {
-                    from_node: 'diff'
-                },
-                reducer: {
-                    callback: {
-                        min: {
-                            arguments: {
-                                data: {
-                                    from_argument: 'data'
+            },
+            diff: {
+                process_id: 'reduce_dimension',
+                arguments: {
+                    data: {
+                        from_node: 'dc'
+                    },
+                    reducer: {
+                        process_graph: {
+                            b3: {
+                                process_id: 'array_element',
+                                arguments: {
+                                    data: {
+                                        from_parameter: 'data'
+                                    },
+                                    label: 'B3'
                                 }
                             },
-                            process_id: 'mean',
-                            result: true
-                        }
-                    }
-                },
-                dimension: 'temporal'
-            }
-        },
-        scale: {
-            process_id: 'apply',
-            arguments: {
-                data: {
-                    from_node: 'reduce'
-                },
-                process: {
-                    callback: {
-                        lsr: {
-                            arguments: {
-                                x: {
-                                    from_argument: 'x'
-                                },
-                                inputMin: -1,
-                                inputMax: 1,
-                                outputMin: 0,
-                                outputMax: 255
+                            b8: {
+                                process_id: 'array_element',
+                                arguments: {
+                                    data: {
+                                        from_parameter: 'data'
+                                    },
+                                    label: 'B8'
+                                }
                             },
-                            process_id: 'linear_scale_range',
-                            result: true
+                            diff: {
+                                process_id: 'normalized_difference',
+                                arguments: {
+                                    x: {
+                                        from_node: 'b8'
+                                    },
+                                    y: {
+                                        from_node: 'b3'
+                                    }
+                                },
+                                result: true
+                            }
+                        }
+                    },
+                    dimension: 'bands'
+                }
+            },
+            reduce: {
+                process_id: 'reduce_dimension',
+                arguments: {
+                    data: {
+                        from_node: 'diff'
+                    },
+                    reducer: {
+                        process_graph: {
+                            min: {
+                                arguments: {
+                                    data: {
+                                        from_parameter: 'data'
+                                    }
+                                },
+                                process_id: 'mean',
+                                result: true
+                            }
+                        }
+                    },
+                    dimension: 't'
+                }
+            },
+            scale: {
+                process_id: 'apply',
+                arguments: {
+                    data: {
+                        from_node: 'reduce'
+                    },
+                    process: {
+                        process_graph: {
+                            lsr: {
+                                arguments: {
+                                    x: {
+                                        from_parameter: 'x'
+                                    },
+                                    inputMin: -1,
+                                    inputMax: 1,
+                                    outputMin: 0,
+                                    outputMax: 255
+                                },
+                                process_id: 'linear_scale_range',
+                                result: true
+                            }
                         }
                     }
                 }
-            }
-        },
-        save: {
-            process_id: 'save_result',
-            arguments: {
-                data: {
-                    from_node: 'scale'
-                },
-                format: 'PNG'
             },
-            result: true
+            save: {
+                process_id: 'save_result',
+                arguments: {
+                    data: {
+                        from_node: 'scale'
+                    },
+                    format: 'PNG'
+                },
+                result: true
+            }
         }
     };
 }

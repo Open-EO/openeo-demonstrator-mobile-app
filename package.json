@@ -41,7 +41,7 @@
     "@ngxs/logger-plugin": "^3.6.2",
     "@ngxs/router-plugin": "^3.6.2",
     "@ngxs/store": "^3.6.2",
-    "@openeo/js-client": "^0.4.3",
+    "@openeo/js-client": "git+https://github.com/Open-EO/openeo-js-client.git#development",
     "cesium": "^1.66.0",
     "cordova-android": "^8.1.0",
     "cordova-android-support-gradle-release": "3.0.1",

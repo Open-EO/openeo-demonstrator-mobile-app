@@ -107,18 +107,17 @@ export class DataProviderService {
     public async connectProvider(provider: DataProvider): Promise<Connection> {
         let connection;
 
+        connection = await OpenEO.connect(provider.url);
+
         switch (provider.authType) {
             case AuthType.Basic:
-            case AuthType.OIDC:
-                connection = await OpenEO.connect(
-                    provider.url,
-                    provider.authType,
-                    provider.authData
+                await connection.authenticateBasic(
+                    provider.authData.username,
+                    provider.authData.password
                 );
                 break;
-            case AuthType.Anonymous:
-            default:
-                connection = await OpenEO.connect(provider.url);
+            case AuthType.OIDC:
+                await connection.authenticateOIDC(provider.authData.token);
                 break;
         }
 

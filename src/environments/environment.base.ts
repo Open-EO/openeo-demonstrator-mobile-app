@@ -27,7 +27,7 @@ export const environment = {
     production: false,
     openEO: {
         hub: 'https://hub.openeo.org/api',
-        version: '0.4.0',
+        version: '1.0.0',
         servers: [
             {
                 name: 'Default Google Earth',
@@ -52,14 +52,13 @@ export const environment = {
                     ],
                     steps: [0, 0.5, 0.6, 0.8, 1],
                     domain: [0, 255],
-                    inverted: true,
                     markers: [
                         {
                             position: 0.0,
-                            value: 1.0
+                            value: -1.0
                         },
                         {
-                            position: 0.4,
+                            position: 0.6,
                             value: 0.2
                         },
                         {
@@ -68,7 +67,7 @@ export const environment = {
                         },
                         {
                             position: 1.0,
-                            value: -1.0
+                            value: 1.0
                         }
                     ]
                 },
@@ -86,7 +85,6 @@ export const environment = {
                     colors: ['#9b7653', '#b59475', '#bad2df', '#5591b0'],
                     steps: [0, 0.45, 0.55, 0.9],
                     domain: [0, 255],
-                    inverted: true,
                     markers: [
                         {
                             position: 0.0,
@@ -118,8 +116,8 @@ export const environment = {
                     '+1.0 where values above 0 indicate some level of snow coverage. Note that clouds might also be classified ' +
                     'as snow with this index.</p>',
                 colorScale: {
-                    colors: ['#2C1910', '#9b7653', '#ff0000', '#ffbbbb'],
-                    steps: [0, 0.5, 0.8, 1],
+                    colors: ['#2C1910', '#9b7653', '#ff8888', '#ffffff'],
+                    steps: [0, 0.5, 0.6, 1],
                     domain: [0, 255],
                     markers: [
                         {
@@ -156,7 +154,6 @@ export const environment = {
                     ],
                     steps: [0, 0.4, 0.5, 0.7, 1],
                     domain: [0, 255],
-                    inverted: true,
                     markers: [
                         {
                             position: 0.0,

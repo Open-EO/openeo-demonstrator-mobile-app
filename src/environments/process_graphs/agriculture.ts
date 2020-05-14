@@ -26,79 +26,81 @@ export function agriculture(
     resolution: number
 ): any {
     return {
-        dc: {
-            process_id: 'load_collection',
-            arguments: {
-                id: collection,
-                spatial_extent: geoJson,
-                temporal_extent: [
-                    formatDate(startDate, 'yyyy-MM-dd', 'en'),
-                    formatDate(endDate, 'yyyy-MM-dd', 'en')
-                ],
-                bands: ['B11', 'B8', 'B2']
-            }
-        },
-        reduce: {
-            process_id: 'reduce',
-            arguments: {
-                data: {
-                    from_node: 'dc'
-                },
-                reducer: {
-                    callback: {
-                        min: {
-                            arguments: {
-                                data: {
-                                    from_argument: 'data'
-                                }
-                            },
-                            process_id: 'min',
-                            result: true
-                        }
-                    }
-                },
-                dimension: 'temporal'
-            }
-        },
-        scale: {
-            process_id: 'apply',
-            arguments: {
-                data: {
-                    from_node: 'reduce'
-                },
-                process: {
-                    callback: {
-                        lsr: {
-                            arguments: {
-                                x: {
-                                    from_argument: 'x'
-                                },
-                                inputMin: 0,
-                                inputMax: 2500,
-                                outputMin: 0,
-                                outputMax: 255
-                            },
-                            process_id: 'linear_scale_range',
-                            result: true
-                        }
-                    }
-                }
-            }
-        },
-        save: {
-            process_id: 'save_result',
-            arguments: {
-                data: {
-                    from_node: 'scale'
-                },
-                format: 'PNG',
-                options: {
-                    red: 'B11',
-                    blue: 'B2',
-                    green: 'B8'
+        process_graph: {
+            dc: {
+                process_id: 'load_collection',
+                arguments: {
+                    id: collection,
+                    spatial_extent: geoJson,
+                    temporal_extent: [
+                        formatDate(startDate, 'yyyy-MM-dd', 'en'),
+                        formatDate(endDate, 'yyyy-MM-dd', 'en')
+                    ],
+                    bands: ['B11', 'B8', 'B2']
                 }
             },
-            result: true
+            reduce: {
+                process_id: 'reduce_dimension',
+                arguments: {
+                    data: {
+                        from_node: 'dc'
+                    },
+                    reducer: {
+                        process_graph: {
+                            min: {
+                                arguments: {
+                                    data: {
+                                        from_parameter: 'data'
+                                    }
+                                },
+                                process_id: 'min',
+                                result: true
+                            }
+                        }
+                    },
+                    dimension: 't'
+                }
+            },
+            scale: {
+                process_id: 'apply',
+                arguments: {
+                    data: {
+                        from_node: 'reduce'
+                    },
+                    process: {
+                        process_graph: {
+                            lsr: {
+                                arguments: {
+                                    x: {
+                                        from_parameter: 'x'
+                                    },
+                                    inputMin: 0,
+                                    inputMax: 2500,
+                                    outputMin: 0,
+                                    outputMax: 255
+                                },
+                                process_id: 'linear_scale_range',
+                                result: true
+                            }
+                        }
+                    }
+                }
+            },
+            save: {
+                process_id: 'save_result',
+                arguments: {
+                    data: {
+                        from_node: 'scale'
+                    },
+                    format: 'PNG',
+                    options: {
+                        red: 'B11',
+                        blue: 'B2',
+                        green: 'B8'
+                    }
+                },
+                result: true
+            }
         }
     };
 }

@@ -112,10 +112,8 @@ export class ColorScaleLegendComponent implements OnInit, OnDestroy {
         );
 
         for (let y = 0; y < scaleHeight; y++) {
-            let value = (y / scaleHeight) * this.SCALE_MAX_VALUE;
-            if (this.index.colorScale.inverted === true) {
-                value = max - value;
-            }
+            const value =
+                this.SCALE_MAX_VALUE - (y / scaleHeight) * this.SCALE_MAX_VALUE;
             const rgb = d3.rgb(scale(value));
 
             for (let x = 0; x < this.SCALE_WIDTH; x++) {
@@ -132,19 +130,6 @@ export class ColorScaleLegendComponent implements OnInit, OnDestroy {
         return scaleCanvas;
     }
 
-    private buildScaleData(): number[] {
-        const height = this.canvas.height;
-        const data = new Array(this.SCALE_WIDTH * height);
-        for (let y = 0; y < height; y++) {
-            const value = (y / height) * this.SCALE_MAX_VALUE;
-            for (let x = 0; x < this.SCALE_WIDTH; x++) {
-                data[y * this.SCALE_WIDTH + x] = value;
-            }
-        }
-
-        return data;
-    }
-
     private renderMarkers(context: CanvasRenderingContext2D) {
         if (!this.index.colorScale.markers) {
             return;
@@ -159,7 +144,11 @@ export class ColorScaleLegendComponent implements OnInit, OnDestroy {
         context.font = this.MARKER_FONT;
 
         for (const marker of this.index.colorScale.markers) {
-            const y = scaleHeight * marker.position + this.SCALE_MARGIN + 0.5;
+            const y =
+                scaleHeight -
+                scaleHeight * marker.position +
+                this.SCALE_MARGIN +
+                0.5;
             context.moveTo(0, y);
             context.lineTo(this.MARKER_WIDTH, y);
             context.strokeText(marker.value, this.MARKER_WIDTH + 5, y);

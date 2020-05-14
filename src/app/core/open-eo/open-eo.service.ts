@@ -47,7 +47,7 @@ export class OpenEOService {
         connection: Connection,
         processGraph: any
     ): Promise<any[]> {
-        return await connection.validateProcessGraph(processGraph);
+        return await connection.validateProcess(processGraph);
     }
 
     public async compute(
@@ -190,10 +190,7 @@ export class OpenEOService {
 
         for (let i = 0; i < imageData.data.length; i = i + 4) {
             if (imageData.data[i + 3] > 0) {
-                let value = imageData.data[i];
-                if (index.colorScale.inverted === true) {
-                    value = max - value;
-                }
+                const value = imageData.data[i];
                 const rgb = d3.rgb(scale(value));
 
                 imageData.data[i] = rgb.r;

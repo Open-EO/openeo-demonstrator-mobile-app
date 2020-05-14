@@ -26,78 +26,80 @@ export function trueColor(
     resolution: number
 ): any {
     return {
-        dc: {
-            process_id: 'load_collection',
-            arguments: {
-                id: collection,
-                spatial_extent: geoJson,
-                temporal_extent: [
-                    formatDate(startDate, 'yyyy-MM-dd', 'en'),
-                    formatDate(endDate, 'yyyy-MM-dd', 'en')
-                ],
-                bands: ['TCI_R', 'TCI_G', 'TCI_B']
-            }
-        },
-        reduce: {
-            process_id: 'reduce',
-            arguments: {
-                data: {
-                    from_node: 'dc'
-                },
-                reducer: {
-                    callback: {
-                        min: {
-                            arguments: {
-                                data: {
-                                    from_argument: 'data'
-                                }
-                            },
-                            process_id: 'min',
-                            result: true
-                        }
-                    }
-                },
-                dimension: 'temporal'
-            }
-        },
-        apply: {
-            process_id: 'apply',
-            arguments: {
-                data: {
-                    from_node: 'reduce'
-                },
-                process: {
-                    callback: {
-                        '2': {
-                            process_id: 'linear_scale_range',
-                            arguments: {
-                                x: {
-                                    from_argument: 'x'
-                                },
-                                inputMin: 0,
-                                inputMax: 255,
-                                outputMax: 255
-                            },
-                            result: true
-                        }
-                    }
-                }
-            }
-        },
-        save: {
-            process_id: 'save_result',
-            arguments: {
-                data: {
-                    from_node: 'apply'
-                },
-                format: 'PNG',
-                options: {
-                    red: 'TCI_R',
-                    blue: 'TCI_B',
-                    green: 'TCI_G'
+        process_graph: {
+            dc: {
+                process_id: 'load_collection',
+                arguments: {
+                    id: collection,
+                    spatial_extent: geoJson,
+                    temporal_extent: [
+                        formatDate(startDate, 'yyyy-MM-dd', 'en'),
+                        formatDate(endDate, 'yyyy-MM-dd', 'en')
+                    ],
+                    bands: ['TCI_R', 'TCI_G', 'TCI_B']
                 }
             },
-            result: true
+            reduce: {
+                process_id: 'reduce_dimension',
+                arguments: {
+                    data: {
+                        from_node: 'dc'
+                    },
+                    reducer: {
+                        process_graph: {
+                            min: {
+                                arguments: {
+                                    data: {
+                                        from_parameter: 'data'
+                                    }
+                                },
+                                process_id: 'min',
+                                result: true
+                            }
+                        }
+                    },
+                    dimension: 't'
+                }
+            },
+            apply: {
+                process_id: 'apply',
+                arguments: {
+                    data: {
+                        from_node: 'reduce'
+                    },
+                    process: {
+                        process_graph: {
+                            '2': {
+                                process_id: 'linear_scale_range',
+                                arguments: {
+                                    x: {
+                                        from_parameter: 'x'
+                                    },
+                                    inputMin: 0,
+                                    inputMax: 255,
+                                    outputMax: 255
+                                },
+                                result: true
+                            }
+                        }
+                    }
+                }
+            },
+            save: {
+                process_id: 'save_result',
+                arguments: {
+                    data: {
+                        from_node: 'apply'
+                    },
+                    format: 'PNG',
+                    options: {
+                        red: 'TCI_R',
+                        blue: 'TCI_B',
+                        green: 'TCI_G'
+                    }
+                },
+                result: true
+            }
         }
     };
 }
