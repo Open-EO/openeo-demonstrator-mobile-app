@@ -26,6 +26,7 @@ import { CodeComponent } from './code/code.component';
 import { ServersPopoverComponent } from './servers-popover/servers-popover.component';
 import { RouterModule } from '@angular/router';
 import { ColorScaleLegendComponent } from './color-scale-legend/color-scale-legend.component';
+import { InterestPopoverComponent } from './interest-popover/interest-popover.component';
 
 @NgModule({
     declarations: [
@@ -36,10 +37,11 @@ import { ColorScaleLegendComponent } from './color-scale-legend/color-scale-lege
         LoadingIndicatorComponent,
         CodeComponent,
         ServersPopoverComponent,
+        InterestPopoverComponent,
         ColorScaleLegendComponent
     ],
     imports: [CommonModule, RouterModule, IonicModule],
-    entryComponents: [ServersPopoverComponent],
+    entryComponents: [ServersPopoverComponent, InterestPopoverComponent],
     exports: [
         CommonModule,
         InterestSearchComponent,
@@ -49,6 +51,7 @@ import { ColorScaleLegendComponent } from './color-scale-legend/color-scale-lege
         LoadingIndicatorComponent,
         CodeComponent,
         ServersPopoverComponent,
+        InterestPopoverComponent,
         ColorScaleLegendComponent
     ]
 })

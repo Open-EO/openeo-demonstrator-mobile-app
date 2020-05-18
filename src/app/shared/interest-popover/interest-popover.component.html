@@ -1,0 +1,9 @@
+<div class="interest-popover-wrapper">
+  <ion-list inset="false" lines="inset">
+    <app-interest-list-item
+            *ngFor="let place of interests"
+            [interest]="place"
+            (selected)="onSelectInterest($event)"
+    ></app-interest-list-item>
+  </ion-list>
+</div>

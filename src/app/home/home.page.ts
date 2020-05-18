@@ -29,9 +29,11 @@ import { Subscription } from 'rxjs';
 import { EOIndex } from '../core/open-eo/eo-index';
 import { DataProviderState } from '../core/data-provider/data-provider.state';
 import { DataProvider } from '../core/data-provider/data-provider';
-import { AlertController } from '@ionic/angular';
+import { AlertController, PopoverController } from '@ionic/angular';
 import { Navigate } from '@ngxs/router-plugin';
 import { IndexData } from '../core/open-eo/index-data';
+import { Location } from '../core/open-eo/location';
+import { InterestPopoverComponent } from '../shared/interest-popover/interest-popover.component';
 
 @Component({
     selector: 'app-home',
@@ -50,7 +52,8 @@ export class HomePage implements OnInit, OnDestroy {
     constructor(
         private interestService: InterestService,
         private store: Store,
-        private alertController: AlertController
+        private alertController: AlertController,
+        private popoverController: PopoverController
     ) {}
 
     public ngOnInit(): void {
@@ -123,6 +126,23 @@ export class HomePage implements OnInit, OnDestroy {
         if (this.selectedInterest) {
             this.store.dispatch(new PreviousIndex());
         }
+    }
+
+    public async onPressMap(location: Location) {
+        const interests = await this.interestService.reverseGeocode(
+            location.getLatitude(),
+            location.getLongitude()
+        );
+
+        const popover = await this.popoverController.create({
+            component: InterestPopoverComponent,
+            componentProps: {
+                interests: interests
+            },
+            animated: true,
+            showBackdrop: true
+        });
+        await popover.present();
     }
 
     private async refreshIndexData() {

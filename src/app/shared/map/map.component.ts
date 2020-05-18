@@ -20,8 +20,11 @@ import {
     ViewChild,
     AfterViewInit,
     Input,
-    ElementRef
+    ElementRef,
+    Output,
+    EventEmitter
 } from '@angular/core';
+import { Location } from '../../core/open-eo/location';
 
 @Component({
     selector: 'app-map',
@@ -29,6 +32,9 @@ import {
     styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements AfterViewInit {
+    @Output()
+    public longPress: EventEmitter<Location> = new EventEmitter<Location>();
+
     @ViewChild('cesiumMap', { static: false })
     public cesiumMap: ElementRef;
     public wmtsConfig = {
@@ -98,7 +104,7 @@ export class MapComponent implements AfterViewInit {
     private _interest: Interest;
     private imageEntity: any = null;
 
-    ngAfterViewInit() {
+    public ngAfterViewInit() {
         this.cesiumViewer = new Cesium.Viewer(this.cesiumMap.nativeElement, {
             selectionIndicator: false,
             timeline: false,
@@ -122,5 +128,26 @@ export class MapComponent implements AfterViewInit {
         this.cesiumViewer.scene.screenSpaceCameraController.enableRotate = true;
         this.cesiumViewer.scene.screenSpaceCameraController.enableTilt = false;
         Cesium.CreditDisplay.cesiumCredit = null;
+    }
+
+    public onPress(event: any) {
+        const ellipsoid = this.cesiumViewer.scene.globe.ellipsoid;
+        const cartesian = this.cesiumViewer.camera.pickEllipsoid(
+            new Cesium.Cartesian3(
+                event.srcEvent.clientX,
+                event.srcEvent.clientY,
+                ellipsoid
+            )
+        );
+
+        if (cartesian) {
+            const coordinates = ellipsoid.cartesianToCartographic(cartesian);
+            this.longPress.emit(
+                new Location(
+                    Cesium.Math.toDegrees(coordinates.latitude),
+                    Cesium.Math.toDegrees(coordinates.longitude)
+                )
+            );
+        }
     }
 }
