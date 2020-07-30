@@ -1,6 +1,6 @@
 {
   "name": "openeo_demonstrator_app",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "App demonstrating openEO functionality in a mobile environment using the openEO JavaScript client.",
   "author": "Solenix Schweiz GmbH",
   "homepage": "https://www.solenix.ch/",
