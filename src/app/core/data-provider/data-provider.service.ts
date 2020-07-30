@@ -16,20 +16,23 @@
 
 import { Injectable } from '@angular/core';
 import { AuthType, DataProvider } from './data-provider';
-import { environment } from '../../../environments/environment';
 import { Connection, OpenEO } from '@openeo/js-client';
 import { HttpClient, HttpResponse } from '@angular/common/http';
+import { EnvironmentService } from '../environment/environment.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class DataProviderService {
-    constructor(private http: HttpClient) {}
+    constructor(
+        private http: HttpClient,
+        private environment: EnvironmentService
+    ) {}
 
     public async getDefaultProviders(): Promise<DataProvider[]> {
         const dataProviders = [];
 
-        const servers = environment.openEO.servers;
+        const servers = this.environment.openEO.servers;
         for (const value of servers) {
             const dataProvider = new DataProvider();
             dataProvider.name = value.name;
@@ -55,7 +58,7 @@ export class DataProviderService {
         const providers = [];
         const backends = await this.http
             .get<HttpResponse<any>>(
-                environment.openEO.hub + '/backends?details=clipped'
+                this.environment.openEO.hub + '/backends?details=clipped'
             )
             .toPromise();
 
@@ -126,7 +129,7 @@ export class DataProviderService {
 
     private checkVersion(versionString: string): boolean {
         const version = versionString.split('.').map(x => parseInt(x, 10));
-        const expected = environment.openEO.version
+        const expected = this.environment.openEO.version
             .split('.')
             .map(x => parseInt(x, 10));
 

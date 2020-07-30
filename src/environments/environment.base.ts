@@ -22,8 +22,9 @@ import { ndbi } from './process_graphs/ndbi';
 import { ndsi } from './process_graphs/ndsi';
 import { agriculture } from './process_graphs/agriculture';
 import { trueColor } from './process_graphs/true-color';
+import { EnvironmentInterface } from '../app/core/environment/environment-interface';
 
-export const environment = {
+export const environment: EnvironmentInterface = {
     production: false,
     openEO: {
         hub: 'https://hub.openeo.org/api',

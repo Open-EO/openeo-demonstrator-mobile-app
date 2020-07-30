@@ -15,8 +15,9 @@
  */
 
 import { environment as base } from './environment.base';
+import { EnvironmentInterface } from '../app/core/environment/environment-interface';
 
-export const environment = {
+export const environment: EnvironmentInterface = {
     ...base,
     production: true
 };
