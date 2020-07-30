@@ -3,7 +3,7 @@
     <name>openEO Demonstrator</name>
     <description>openEO demonstrator app</description>
     <author email="info@solenix.ch" href="https://www.solenix.ch/">Solenix GmbH</author>
-    <content src="index.html" />
+    <content original-src="index.html" src="https://localhost:8100" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />

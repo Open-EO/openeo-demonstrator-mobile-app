@@ -32,7 +32,7 @@ export const environment: EnvironmentInterface = {
         servers: [
             {
                 name: 'Default Google Earth',
-                url: 'https://earthengine.openeo.org/',
+                url: 'https://earthengine.openeo.org/v1.0',
                 collectionId: 'COPERNICUS/S2_SR',
                 public: true,
                 authType: AuthType.Basic,
