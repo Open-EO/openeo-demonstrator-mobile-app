@@ -30,6 +30,7 @@ import { CacheIndexData } from '../interest/interest.actions';
 import * as d3 from 'd3';
 import { CustomMessageError } from '../error/custom-message-error';
 import { DataProvider } from '../data-provider/data-provider';
+import simplify from 'simplify-js';
 
 @Injectable({
     providedIn: 'root'
@@ -212,7 +213,7 @@ export class OpenEOService {
                 startDate,
                 endDate,
                 location.boundingBox,
-                JSON.parse(location.geoJson),
+                location.geoJson,
                 resolution
             );
 

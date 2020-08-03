@@ -78,7 +78,7 @@ export class MapComponent implements AfterViewInit {
     public set interest(value: Interest) {
         if (value && value.osmLocation && value.osmLocation.geoJson) {
             this._interest = value;
-            this.geoJson = JSON.parse(value.osmLocation.geoJson);
+            this.geoJson = value.osmLocation.geoJson;
             Cesium.GeoJsonDataSource.load(this.geoJson, {
                 stroke: Cesium.Color.DARKBLUE,
                 fill: Cesium.Color.TRANSPARENT,

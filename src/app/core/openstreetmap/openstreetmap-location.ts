@@ -15,8 +15,11 @@
  */
 
 import { BoundingBox } from '../open-eo/bounding-box';
+import simplify from 'simplify-js';
 
 export class OpenstreetmapLocation {
+    private static readonly SIMPLIFICATION_PRECISION_FACTOR = 0.000001;
+
     public osmId: number;
     public name: string;
     public nameEn: string;
@@ -39,6 +42,46 @@ export class OpenstreetmapLocation {
     }
 
     constructor(data: any) {
+        if (data.geoJson) {
+            data.geoJson = JSON.parse(data.geoJson);
+            if (data.geoJson.coordinates) {
+                data.geoJson.coordinates = this.simplify(
+                    data.geoJson.coordinates
+                );
+            }
+        }
+
         Object.assign(this, data);
+    }
+
+    private simplify(polygon: any): any {
+        if (
+            Array.isArray(polygon) &&
+            Array.isArray(polygon[0]) &&
+            !Array.isArray(polygon[0][0])
+        ) {
+            const precision =
+                polygon.length *
+                OpenstreetmapLocation.SIMPLIFICATION_PRECISION_FACTOR;
+            const oldPolygon = polygon;
+            if (polygon.length > 30) {
+                polygon = polygon.map(item => {
+                    return { x: item[0], y: item[1] };
+                });
+                polygon = simplify(polygon, precision).map(item => {
+                    return [item.x, item.y];
+                });
+            }
+            if (polygon.length < 4) {
+                console.warn(
+                    'Simplified polygon less than 4 points, reverting to original polygon.'
+                );
+                polygon = oldPolygon;
+            }
+        } else {
+            polygon = polygon.map(item => this.simplify(item));
+        }
+
+        return polygon;
     }
 }
