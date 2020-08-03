@@ -30,7 +30,17 @@ const routes: Routes = [
         children: [
             {
                 path: 'home',
-                loadChildren: '../home/home.module#HomePageModule'
+                children: [
+                    {
+                        path: '',
+                        loadChildren: '../home/home.module#HomePageModule'
+                    },
+                    {
+                        path: 'date-settings',
+                        loadChildren:
+                            '../home/date-settings/date-settings.module#DateSettingsPageModule'
+                    }
+                ]
             },
             {
                 path: 'recent-locations',

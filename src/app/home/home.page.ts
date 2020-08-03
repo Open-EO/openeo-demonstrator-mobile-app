@@ -145,6 +145,8 @@ export class HomePage implements OnInit, OnDestroy {
         await popover.present();
     }
 
+    public async openDateDialog() {}
+
     private async refreshIndexData() {
         if (this.isDataProvidersInitialized) {
             this.store.dispatch(new LoadCurrentIndexData());
