@@ -1,9 +1,36 @@
 <ion-header>
     <ion-toolbar>
-        <ion-title>Date/Time selection</ion-title>
+        <ion-buttons slot="start">
+            <ion-back-button></ion-back-button>
+        </ion-buttons>
+        <ion-title>Date selection</ion-title>
     </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding">
+    <p>
+        Please select the date you would like to retrieve data for.
+    </p>
+    <ion-item>
+        <ion-label>Date</ion-label>
+        <ion-datetime displayFormat="DD-MM-YYYY" min="2015-01-01" [max]="maxDate" [ngModel]="retrievalDate.toISOString()" (ionChange)="onChangeDate($event)"></ion-datetime>
+    </ion-item>
 
+    <h2>Timespan</h2>
+    <p>
+        As the satellites will only pass over a specific location every couple of days, the app always uses an average
+        calculated over the last couple of days before the seletced date. By setting the range to a higher number, you
+        can ensure that at least one pass is available for each location.
+    </p>
+    <p>
+        Of course, the length over which the average is calculated can be adjusted as well (default is 10 days).
+    </p>
+    <p>
+        Currently using the data {{ retrievalTimespan }} days back.
+    </p>
+    <ion-item>
+        2
+        <ion-range min="2" max="14" step="1" snaps="true" ticks="true" color="primary" [value]="retrievalTimespan" (ionChange)="onChangeTimespan($event)"></ion-range>
+        14
+    </ion-item>
 </ion-content>

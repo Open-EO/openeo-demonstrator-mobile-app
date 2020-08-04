@@ -192,7 +192,7 @@ export const environment: EnvironmentInterface = {
                 processGraph: trueColor,
                 colorScale: null,
                 description:
-                    '<p> The image as it would be seen by the human eye..'
+                    '<p> The image as it would be seen by the human eye.'
             }
         }
     },

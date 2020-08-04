@@ -23,7 +23,9 @@ import {
     NextIndex,
     PreviousIndex,
     LoadCurrentIndexData,
-    CacheIndexData
+    CacheIndexData,
+    UpdateRetrievalDate,
+    UpdateRetrievalTimespan
 } from './interest.actions';
 import { Interest } from './interest';
 import {
@@ -41,7 +43,7 @@ import { OpenstreetmapLocation } from '../openstreetmap/openstreetmap-location';
 import { OpenEOService } from '../open-eo/open-eo.service';
 import { IndexData } from '../open-eo/index-data';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
-import { rotatingClamp } from '../utils';
+import { dateOfTodayWithoutTime, rotatingClamp } from '../utils';
 import { Platform } from '@ionic/angular';
 import { environment } from '../../../environments/environment';
 
@@ -52,6 +54,8 @@ export interface InterestStateModel {
     currentIndex: EOIndex;
     currentIndexData: IndexData;
     indexDataCache: Map<string, IndexData>;
+    retrievalDate: Date;
+    retrievalTimespan: number;
 }
 
 @State<InterestStateModel>({
@@ -62,7 +66,9 @@ export interface InterestStateModel {
         currentIndexId: 0,
         currentIndex: null,
         currentIndexData: null,
-        indexDataCache: new Map<string, IndexData>()
+        indexDataCache: new Map<string, IndexData>(),
+        retrievalDate: dateOfTodayWithoutTime(),
+        retrievalTimespan: 10
     }
 })
 export class InterestState implements NgxsOnInit {
@@ -110,6 +116,16 @@ export class InterestState implements NgxsOnInit {
     @Selector()
     public static getIndexDataCache(state: InterestStateModel) {
         return state.indexDataCache;
+    }
+
+    @Selector()
+    public static getRetrievalDate(state: InterestStateModel) {
+        return state.retrievalDate;
+    }
+
+    @Selector()
+    public static getRetrievalTimespan(state: InterestStateModel) {
+        return state.retrievalTimespan;
     }
 
     public async ngxsOnInit(ctx: StateContext<InterestStateModel>) {
@@ -275,6 +291,26 @@ export class InterestState implements NgxsOnInit {
             indexDataCache: ctx
                 .getState()
                 .indexDataCache.set(action.data.cacheId, action.data)
+        });
+    }
+
+    @Action(UpdateRetrievalDate)
+    public updateRetrievalDate(
+        ctx: StateContext<InterestStateModel>,
+        action: UpdateRetrievalDate
+    ) {
+        ctx.patchState({
+            retrievalDate: action.retrievalDate
+        });
+    }
+
+    @Action(UpdateRetrievalTimespan)
+    public updateRetrievalTimespan(
+        ctx: StateContext<InterestStateModel>,
+        action: UpdateRetrievalTimespan
+    ) {
+        ctx.patchState({
+            retrievalTimespan: action.retrievalTimespan
         });
     }
 

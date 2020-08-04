@@ -50,3 +50,15 @@ export class CacheIndexData {
 
     constructor(public data: IndexData) {}
 }
+
+export class UpdateRetrievalDate {
+    static readonly type = '[Interests] Update Retrieval Date';
+
+    constructor(public retrievalDate: Date) {}
+}
+
+export class UpdateRetrievalTimespan {
+    static readonly type = '[Interests] Update Retrieval Timespan';
+
+    constructor(public retrievalTimespan: number) {}
+}
