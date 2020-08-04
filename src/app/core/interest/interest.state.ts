@@ -23,7 +23,7 @@ import {
     NextIndex,
     PreviousIndex,
     LoadCurrentIndexData,
-    CacheIndexData,
+    UpdateIndexData,
     UpdateRetrievalDate,
     UpdateRetrievalTimespan
 } from './interest.actions';
@@ -261,37 +261,38 @@ export class InterestState implements NgxsOnInit {
             return null;
         }
 
-        const indexData = await this.openEOService.loadIndexData(
+        await this.openEOService.loadIndexData(
             state.currentIndex,
             state.selected.osmLocation,
-            state.indexDataCache
+            state.indexDataCache,
+            state.retrievalDate,
+            state.retrievalTimespan
         );
-        if (indexData !== null) {
-            const newState = ctx.getState();
-
-            // user might have switched to another index or location while fetching the data
-            if (
-                newState.currentIndex === state.currentIndex &&
-                newState.selected.osmLocation.osmId ===
-                    state.selected.osmLocation.osmId
-            ) {
-                ctx.patchState({
-                    currentIndexData: indexData
-                });
-            }
-        }
     }
 
-    @Action(CacheIndexData)
+    @Action(UpdateIndexData)
     public cacheIndexData(
         ctx: StateContext<InterestStateModel>,
-        action: CacheIndexData
+        action: UpdateIndexData
     ) {
-        ctx.patchState({
-            indexDataCache: ctx
-                .getState()
-                .indexDataCache.set(action.data.cacheId, action.data)
-        });
+        const state = ctx.getState();
+        if (!state.indexDataCache.has(action.data.cacheId)) {
+            ctx.patchState({
+                indexDataCache: state.indexDataCache.set(
+                    action.data.cacheId,
+                    action.data
+                )
+            });
+        }
+
+        if (
+            state.currentIndex === action.data.index &&
+            state.selected.osmLocation.osmId === action.data.location.osmId
+        ) {
+            ctx.patchState({
+                currentIndexData: action.data
+            });
+        }
     }
 
     @Action(UpdateRetrievalDate)

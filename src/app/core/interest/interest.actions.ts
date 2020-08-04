@@ -45,7 +45,7 @@ export class LoadCurrentIndexData {
     static readonly type = '[Interests] Load Current EO Index Data';
 }
 
-export class CacheIndexData {
+export class UpdateIndexData {
     static readonly type = '[Interests] Cache Index Data';
 
     constructor(public data: IndexData) {}

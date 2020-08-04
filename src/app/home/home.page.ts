@@ -57,7 +57,7 @@ export class HomePage implements OnInit, OnDestroy {
     ) {}
 
     public ngOnInit(): void {
-        this.subscriptions.push(
+        this.subscriptions = [
             this.store.select(InterestState.getSelected).subscribe(selected => {
                 if (selected === null) {
                     return;
@@ -89,18 +89,17 @@ export class HomePage implements OnInit, OnDestroy {
                     this.isDataProvidersInitialized = initialized;
                     this.refreshIndexData();
                 })
-        );
+        ];
     }
 
     public ngOnDestroy(): void {
-        for (const subscription of this.subscriptions) {
-            subscription.unsubscribe();
-        }
+        this.subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
     public async ionViewWillEnter() {
         this.isActivePage = true;
         this.showPromptIfNoActiveProviders();
+        this.refreshIndexData();
     }
 
     public ionViewWillLeave() {

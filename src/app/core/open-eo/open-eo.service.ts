@@ -26,17 +26,19 @@ import {
 } from '../utils';
 import { OpenstreetmapLocation } from '../openstreetmap/openstreetmap-location';
 import { IndexData } from './index-data';
-import { CacheIndexData } from '../interest/interest.actions';
+import { UpdateIndexData } from '../interest/interest.actions';
 import * as d3 from 'd3';
 import { CustomMessageError } from '../error/custom-message-error';
 import { DataProvider } from '../data-provider/data-provider';
 import simplify from 'simplify-js';
+import { InterestState } from '../interest/interest.state';
 
 @Injectable({
     providedIn: 'root'
 })
 export class OpenEOService {
     private renderer: Renderer2;
+    private pendingIndexCacheIds = {};
 
     public constructor(
         private store: Store,
@@ -81,7 +83,9 @@ export class OpenEOService {
     public async loadIndexData(
         index: EOIndex,
         location: OpenstreetmapLocation,
-        cache: Map<string, any>
+        cache: Map<string, any>,
+        retrievalDate: Date,
+        retrievalTimespan: number
     ): Promise<IndexData> {
         const dataProviders = this.store.selectSnapshot(
             DataProviderState.getActive
@@ -91,13 +95,24 @@ export class OpenEOService {
             return null;
         }
 
-        const endDate = dateOfTodayWithoutTime();
-        const startDate = dateOfTodayWithoutTime();
-        startDate.setDate(endDate.getDate() - 10);
+        const endDate = retrievalDate;
+        const timespan = retrievalTimespan;
+        const startDate = new Date(retrievalDate);
+        startDate.setDate(startDate.getDate() - timespan);
         const indexData = new IndexData(index, location, startDate, endDate);
 
+        // check if we have this in cache already
         if (cache.has(indexData.cacheId)) {
-            return cache.get(indexData.cacheId);
+            this.store.dispatch(
+                new UpdateIndexData(cache.get(indexData.cacheId))
+            );
+        }
+
+        // check if another request is already pending for this index data so we don't request the same thing twice
+        if (!this.pendingIndexCacheIds[indexData.cacheId]) {
+            this.pendingIndexCacheIds[indexData.cacheId] = true;
+        } else {
+            return;
         }
 
         const computeDetails = await this.findProvider(
@@ -117,7 +132,7 @@ export class OpenEOService {
                 computeDetails.processGraph
             );
             indexData.canvas = await this.blobToRaster(index, indexData.data);
-            this.store.dispatch(new CacheIndexData(indexData));
+            this.store.dispatch(new UpdateIndexData(indexData));
         } else {
             throw new CustomMessageError(
                 'No provider was able to process the request. Please make sure you have selected a collection in the settings.'
