@@ -7,6 +7,9 @@
       (ionBlur)="isSearching = false"
       debounce="300"
     ></ion-searchbar>
+    <ion-button color="dark" routerLink="/tabs/home/date-settings">
+      <ion-icon name="calendar-outline"></ion-icon>
+    </ion-button>
     <ion-button color="dark" [class.searching]="isSearching" (click)="onServersPopover($event)"><ion-icon name="planet"></ion-icon></ion-button>
   </div>
   <div class="search-content-wrapper ion-padding" *ngIf="contentVisible">

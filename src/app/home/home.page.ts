@@ -24,8 +24,8 @@ import { InterestState } from '../core/interest/interest.state';
 import { InterestService } from '../core/interest/interest.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Interest } from '../core/interest/interest';
-import { Store } from '@ngxs/store';
-import { Subscription } from 'rxjs';
+import { Select, Store } from '@ngxs/store';
+import { Observable, Subscription } from 'rxjs';
 import { EOIndex } from '../core/open-eo/eo-index';
 import { DataProviderState } from '../core/data-provider/data-provider.state';
 import { DataProvider } from '../core/data-provider/data-provider';
@@ -41,6 +41,11 @@ import { InterestPopoverComponent } from '../shared/interest-popover/interest-po
     styleUrls: ['home.page.scss']
 })
 export class HomePage implements OnInit, OnDestroy {
+    @Select(InterestState.getRetrievalDate)
+    public retrievalDate$: Observable<Date>;
+    @Select(InterestState.getRetrievalStartDate)
+    public retrievalStartDate: Observable<Date>;
+
     public selectedInterest: Interest;
     public currentIndex: EOIndex;
     public dataObjectURL: any = null;
@@ -143,8 +148,6 @@ export class HomePage implements OnInit, OnDestroy {
         });
         await popover.present();
     }
-
-    public async openDateDialog() {}
 
     private async refreshIndexData() {
         if (this.isDataProvidersInitialized) {

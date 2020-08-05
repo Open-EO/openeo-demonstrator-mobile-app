@@ -85,7 +85,7 @@ export class OpenEOService {
         location: OpenstreetmapLocation,
         cache: Map<string, any>,
         retrievalDate: Date,
-        retrievalTimespan: number
+        retrievalStartDate: Date
     ): Promise<IndexData> {
         const dataProviders = this.store.selectSnapshot(
             DataProviderState.getActive
@@ -95,11 +95,12 @@ export class OpenEOService {
             return null;
         }
 
-        const endDate = retrievalDate;
-        const timespan = retrievalTimespan;
-        const startDate = new Date(retrievalDate);
-        startDate.setDate(startDate.getDate() - timespan);
-        const indexData = new IndexData(index, location, startDate, endDate);
+        const indexData = new IndexData(
+            index,
+            location,
+            retrievalStartDate,
+            retrievalDate
+        );
 
         // check if we have this in cache already
         if (cache.has(indexData.cacheId)) {
@@ -118,8 +119,8 @@ export class OpenEOService {
         const computeDetails = await this.findProvider(
             index,
             dataProviders,
-            startDate,
-            endDate,
+            retrievalStartDate,
+            retrievalDate,
             location
         );
 

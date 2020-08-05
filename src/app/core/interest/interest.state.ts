@@ -55,6 +55,7 @@ export interface InterestStateModel {
     currentIndexData: IndexData;
     indexDataCache: Map<string, IndexData>;
     retrievalDate: Date;
+    retrievalStartDate: Date;
     retrievalTimespan: number;
 }
 
@@ -68,6 +69,7 @@ export interface InterestStateModel {
         currentIndexData: null,
         indexDataCache: new Map<string, IndexData>(),
         retrievalDate: dateOfTodayWithoutTime(),
+        retrievalStartDate: dateOfTodayWithoutTime(),
         retrievalTimespan: 10
     }
 })
@@ -124,6 +126,11 @@ export class InterestState implements NgxsOnInit {
     }
 
     @Selector()
+    public static getRetrievalStartDate(state: InterestStateModel) {
+        return state.retrievalStartDate;
+    }
+
+    @Selector()
     public static getRetrievalTimespan(state: InterestStateModel) {
         return state.retrievalTimespan;
     }
@@ -133,7 +140,7 @@ export class InterestState implements NgxsOnInit {
             ctx.dispatch(new LoadInterests());
 
             // Update location whenever Geolocation services become available and no location has been selected yet
-            this.diagnostic.registerLocationStateChangeHandler(async state => {
+            this.diagnostic.registerLocationStateChangeHandler(async () => {
                 if (!ctx.getState().selected) {
                     await this.service.checkForLocation();
                 }
@@ -142,6 +149,14 @@ export class InterestState implements NgxsOnInit {
             if (!ctx.getState().selected) {
                 await this.service.checkForLocation();
             }
+        });
+
+        const state = ctx.getState();
+        ctx.patchState({
+            retrievalStartDate: this.calculateStartDate(
+                state.retrievalDate,
+                state.retrievalTimespan
+            )
         });
     }
 
@@ -266,7 +281,7 @@ export class InterestState implements NgxsOnInit {
             state.selected.osmLocation,
             state.indexDataCache,
             state.retrievalDate,
-            state.retrievalTimespan
+            state.retrievalStartDate
         );
     }
 
@@ -301,7 +316,11 @@ export class InterestState implements NgxsOnInit {
         action: UpdateRetrievalDate
     ) {
         ctx.patchState({
-            retrievalDate: action.retrievalDate
+            retrievalDate: action.retrievalDate,
+            retrievalStartDate: this.calculateStartDate(
+                action.retrievalDate,
+                ctx.getState().retrievalTimespan
+            )
         });
     }
 
@@ -311,8 +330,19 @@ export class InterestState implements NgxsOnInit {
         action: UpdateRetrievalTimespan
     ) {
         ctx.patchState({
-            retrievalTimespan: action.retrievalTimespan
+            retrievalTimespan: action.retrievalTimespan,
+            retrievalStartDate: this.calculateStartDate(
+                ctx.getState().retrievalDate,
+                action.retrievalTimespan
+            )
         });
+    }
+
+    private calculateStartDate(endDate: Date, timespan: number): Date {
+        const startDate = new Date(endDate);
+        startDate.setDate(startDate.getDate() - timespan);
+
+        return startDate;
     }
 
     private findInterestIndex(interests: Interest[], osmId: number) {

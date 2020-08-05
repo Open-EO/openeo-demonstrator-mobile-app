@@ -22,14 +22,10 @@
                     <div class="title">
                         <h1>{{ selectedInterest.osmLocation.name }}</h1>
                         <p>
-                            {{ selectedInterest.osmLocation.latitude }}°N
-                            {{ selectedInterest.osmLocation.longitude }}°E
+                            Data from {{ (retrievalStartDate | async) | date:'mediumDate' }} to {{ (retrievalDate$ | async) | date:'mediumDate' }}
                         </p>
                     </div>
                     <div class="actions">
-                        <ion-button fill="clear" (click)="openDateDialog()" routerLink="/tabs/home/date-settings">
-                            <ion-icon name="calendar-outline"></ion-icon>
-                        </ion-button>
                         <ion-button fill="clear" (click)="onFavorise()">
                             <ion-icon
                                     name="star-outline"
