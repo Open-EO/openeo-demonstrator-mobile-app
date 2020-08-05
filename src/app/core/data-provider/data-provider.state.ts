@@ -108,7 +108,7 @@ export class DataProviderState implements NgxsOnInit {
         );
         const hubProviders: DataProvider[] = await this.service.getHubProviders();
         const providers = sortBy(
-            unionBy(loadedProviders, hubProviders, defaultProviders, 'url'),
+            unionBy(loadedProviders, defaultProviders, hubProviders, 'url'),
             provider => provider.name
         );
 
