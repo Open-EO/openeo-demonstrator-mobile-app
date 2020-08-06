@@ -29,10 +29,8 @@ import {
 } from './data-provider.actions';
 import { DataProvider } from './data-provider';
 import { State, Action, StateContext, Selector, NgxsOnInit } from '@ngxs/store';
-import { Storage } from '@ionic/storage';
 import { DataProviderService } from './data-provider.service';
 import { Navigate } from '@ngxs/router-plugin';
-import { sortBy, unionBy } from 'lodash';
 
 export interface DataProviderStateModel {
     dataProviders: DataProvider[];
@@ -49,12 +47,7 @@ export interface DataProviderStateModel {
     }
 })
 export class DataProviderState implements NgxsOnInit {
-    private static readonly STORAGE_KEY = 'dataProviders';
-
-    constructor(
-        private storage: Storage,
-        private service: DataProviderService
-    ) {}
+    constructor(private service: DataProviderService) {}
 
     @Selector()
     public static getAll(state: DataProviderStateModel) {
@@ -89,40 +82,11 @@ export class DataProviderState implements NgxsOnInit {
         ctx.dispatch(new LoadDataProviders());
     }
 
-    /**
-     * The list of data providers in the app is a combination of 3 sources:
-     *   - the default providers from the environment files
-     *   - the providers loaded from the openEO Hub
-     *   - custom providers and previously used providers from any of the other two sources
-     *
-     * This action loads the data providers from all three sources and combines
-     * them to the final list shown and used in the app.
-     *
-     * @param ctx
-     */
     @Action(LoadDataProviders)
     public async loadDataProviders(ctx: StateContext<DataProviderStateModel>) {
-        const defaultProviders = await this.service.getDefaultProviders();
-        const loadedProviders: DataProvider[] = await this.storage.get(
-            DataProviderState.STORAGE_KEY
-        );
-        const hubProviders: DataProvider[] = await this.service.getHubProviders();
-        const providers = sortBy(
-            unionBy(loadedProviders, defaultProviders, hubProviders, 'url'),
-            provider => provider.name
-        );
+        const providers = await this.service.getCombinedDataProviders();
 
-        for (let i = 0; i < providers.length; i++) {
-            if (providers[i].isActive) {
-                providers[i].connection = await this.service.connectProvider(
-                    providers[i]
-                );
-            }
-        }
-
-        const state = ctx.getState();
-        ctx.setState({
-            ...state,
+        ctx.patchState({
             dataProviders: providers,
             initialized: true
         });
@@ -130,14 +94,7 @@ export class DataProviderState implements NgxsOnInit {
 
     @Action(SaveDataProviders)
     public async saveDataProviders(ctx: StateContext<DataProviderStateModel>) {
-        const dataProviders = [];
-        for (const dataProvider of ctx.getState().dataProviders) {
-            const cleanProvider = { ...dataProvider };
-            cleanProvider.connection = null;
-            dataProviders.push(cleanProvider);
-        }
-
-        await this.storage.set(DataProviderState.STORAGE_KEY, dataProviders);
+        await this.service.saveDataProviders(ctx.getState().dataProviders);
     }
 
     @Action(ToggleDataProvider)

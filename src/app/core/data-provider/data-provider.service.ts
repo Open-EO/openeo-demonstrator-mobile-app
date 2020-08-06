@@ -19,17 +19,22 @@ import { AuthType, DataProvider } from './data-provider';
 import { Connection, OpenEO } from '@openeo/js-client';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { EnvironmentService } from '../environment/environment.service';
+import { Storage } from '@ionic/storage';
+import { sortBy, unionBy } from 'lodash';
 
 @Injectable({
     providedIn: 'root'
 })
 export class DataProviderService {
+    private static readonly STORAGE_KEY = 'dataProviders';
+
     constructor(
         private http: HttpClient,
+        private storage: Storage,
         private environment: EnvironmentService
     ) {}
 
-    public async getDefaultProviders(): Promise<DataProvider[]> {
+    private async getDefaultProviders(): Promise<DataProvider[]> {
         const dataProviders = [];
 
         const servers = this.environment.openEO.servers;
@@ -54,7 +59,7 @@ export class DataProviderService {
         return dataProviders;
     }
 
-    public async getHubProviders(): Promise<DataProvider[]> {
+    private async getHubProviders(): Promise<DataProvider[]> {
         const providers = [];
         const backends = await this.http
             .get<HttpResponse<any>>(
@@ -76,6 +81,52 @@ export class DataProviderService {
         }
 
         return providers;
+    }
+
+    /**
+     * The list of data providers in the app is a combination of 3 sources:
+     *   - the default providers from the environment files
+     *   - the providers loaded from the openEO Hub
+     *   - custom providers and previously used providers from any of the other two sources
+     *
+     * This action loads the data providers from all three sources and combines
+     * them to the final list shown and used in the app.
+     */
+    public async getCombinedDataProviders(): Promise<DataProvider[]> {
+        const defaultProviders = await this.getDefaultProviders();
+        const loadedProviders: DataProvider[] = await this.storage.get(
+            DataProviderService.STORAGE_KEY
+        );
+        const hubProviders: DataProvider[] = await this.getHubProviders();
+
+        const providers = sortBy(
+            unionBy(loadedProviders, defaultProviders, hubProviders, 'url'),
+            provider => provider.name
+        );
+
+        for (let i = 0; i < providers.length; i++) {
+            if (providers[i].isActive) {
+                providers[i].connection = await this.connectProvider(
+                    providers[i]
+                );
+            }
+        }
+
+        return providers;
+    }
+
+    public async saveDataProviders(dataProviders: DataProvider[]) {
+        const cleanedDataProviders = [];
+        for (const dataProvider of dataProviders) {
+            const cleanProvider = { ...dataProvider };
+            cleanProvider.connection = null;
+            cleanedDataProviders.push(cleanProvider);
+        }
+
+        await this.storage.set(
+            DataProviderService.STORAGE_KEY,
+            cleanedDataProviders
+        );
     }
 
     public async toggleActive(provider: DataProvider) {
