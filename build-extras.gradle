@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-ext.cdvBuildArch = 'arm'
-ext.cdvBuildMultipleApks = true
+// ext.cdvBuildArch = 'arm'
+// ext.cdvBuildMultipleApks = true
 
 android {
     buildTypes {
