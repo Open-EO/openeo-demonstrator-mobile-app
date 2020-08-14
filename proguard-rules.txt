@@ -1,0 +1,14 @@
+# custom proguard rules for android needed for the app to work properly
+
+# based on the proguard tutorial in the Ionic forums by https://forum.ionicframework.com/u/rasioc
+# here https://forum.ionicframework.com/t/proguard-and-ionic/84271
+
+-keep class org.apache.cordova.** { *; }
+-keep public class * extends org.apache.cordova.CordovaPlugin
+-keep class com.ionic.keyboard.IonicKeyboard.** { *; }
+
+# and based on the solution mentioned in this bug report for the ionic-webview plugin:
+# https://github.com/ionic-team/cordova-plugin-ionic-webview/issues/145 by https://github.com/AadityaDev
+
+-keep class com.ionicframework.cordova.webview.** { *; }
+-keep class com.ionicframework.cordova.webview.*

@@ -22,7 +22,8 @@ module.exports = function (ctx) {
         async = require('async');
 
     var files = {
-        'build-extras.gradle': 'platforms/android/build-extras.gradle'
+        'build-extras.gradle': 'platforms/android/app/build-extras.gradle',
+        'proguard-rules.txt': 'platforms/android/app/proguard-rules.txt',
     };
 
     var copyFiles = function() {

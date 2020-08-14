@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-// ext.cdvBuildArch = 'arm'
-// ext.cdvBuildMultipleApks = true
-
 android {
     buildTypes {
+        debug {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                'proguard-rules.txt'
+        }
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt')
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                'proguard-rules.txt'
         }
     }
 }
