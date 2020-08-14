@@ -23,9 +23,9 @@ module.exports = function (ctx) {
     }
 
     var files = {
-        'platforms/android/app/build/outputs/apk/armv7/debug/app-armv7-debug.apk': 'output/app-armv7-debug.apk',
-        'platforms/android/app/build/outputs/apk/armv7/release/app-armv7-release-unsigned.apk': 'output/app-armv7-release-unsigned.apk',
-        'platforms/android/app/build/outputs/mapping/armv7/release/mapping.txt': 'output/mapping.txt'
+        'platforms/android/app/build/outputs/apk/debug/app-debug.apk': 'output/app-debug.apk',
+        'platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk': 'output/app-release-unsigned.apk',
+        'platforms/android/app/build/outputs/mapping/release/mapping.txt': 'output/mapping.txt'
     }
 
     Object.keys(files).forEach(function (srcFile) {
