@@ -31,7 +31,7 @@
     "@angular/platform-browser-dynamic": "~8.2.14",
     "@angular/router": "~8.2.14",
     "@ionic-native/core": "^5.0.0",
-    "@ionic-native/diagnostic": "^5.0.0",
+    "@ionic-native/diagnostic": "^5.27.0",
     "@ionic-native/geolocation": "^5.0.0",
     "@ionic-native/keyboard": "^5.0.0",
     "@ionic-native/splash-screen": "^5.0.0",
@@ -43,8 +43,6 @@
     "@ngxs/store": "^3.6.2",
     "@openeo/js-client": "^1.0.0-beta.2",
     "cesium": "^1.66.0",
-    "cordova-android": "^8.1.0",
-    "cordova-android-support-gradle-release": "3.0.1",
     "cordova-ios": "^5.1.1",
     "cordova-res": "^0.15.1",
     "core-js": "^2.5.4",
@@ -68,7 +66,7 @@
     "@angular/compiler-cli": "~8.2.14",
     "@angular/language-service": "~8.2.14",
     "@ionic/angular-toolkit": "^2.3.0",
-    "@ionic/cli": "^6.6.0",
+    "@ionic/cli": "^6.11.0",
     "@types/cesium": "^1.66.2",
     "@types/d3": "^5.7.2",
     "@types/hammerjs": "^2.0.36",
@@ -78,6 +76,7 @@
     "@types/rx": "^4.1.1",
     "codelyzer": "^5.0.0",
     "cordova": "^10.0.0",
+    "cordova-android": "^9.0.0",
     "cordova-plugin-device": "^2.0.2",
     "cordova-plugin-geolocation": "^4.0.2",
     "cordova-plugin-ionic-keyboard": "^2.2.0",
@@ -111,14 +110,11 @@
       "cordova-plugin-device": {},
       "cordova-plugin-statusbar": {},
       "cordova-plugin-splashscreen": {},
-      "cordova-android-support-gradle-release": {
-        "ANDROID_SUPPORT_VERSION": "27.+"
-      },
       "cordova-plugin-whitelist": {},
       "cordova-plugin-ionic-keyboard": {},
       "cordova-sqlite-storage": {},
       "cordova.plugins.diagnostic": {
-        "ANDROID_SUPPORT_VERSION": "27.+"
+        "ANDROID_SUPPORT_VERSION": "28.+"
       },
       "cordova-plugin-geolocation": {},
       "cordova-plugin-ionic-webview": {}
