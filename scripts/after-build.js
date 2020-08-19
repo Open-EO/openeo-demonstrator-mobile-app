@@ -25,6 +25,7 @@ module.exports = function (ctx) {
     var files = {
         'platforms/android/app/build/outputs/apk/debug/app-debug.apk': 'output/app-debug.apk',
         'platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk': 'output/app-release-unsigned.apk',
+        'platforms/android/app/build/outputs/bundle/release/app-release.aab': 'output/app-release.aab',
         'platforms/android/app/build/outputs/mapping/release/mapping.txt': 'output/mapping.txt'
     }
 

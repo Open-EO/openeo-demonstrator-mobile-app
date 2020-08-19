@@ -14,7 +14,7 @@
     "serve": "ionic serve",
     "build": "ionic build",
     "build-ios": "ionic cordova build ios -- --prod --release --buildFlag=\"-UseModernBuildSystem=0\"",
-    "build-android": "ionic cordova build android -- --prod --release",
+    "build-android": "ionic cordova build android -- --prod --release -- --packageType=bundle",
     "package-ios": "ionic cordova build ios -- --prod --release --device --codeSignIdentity=\"iPhone Developer\" --buildFlag=\"-UseModernBuildSystem=0\"",
     "ios-live": "ionic cordova emulate ios -lc --debug --target=\"iPhone-X\" -- --buildFlag=\"-UseModernBuildSystem=0\"",
     "android-live": "ionic cordova emulate android -lc --debug --ssl",
