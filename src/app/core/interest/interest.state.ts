@@ -162,24 +162,21 @@ export class InterestState implements NgxsOnInit {
 
     @Action(LoadInterests)
     public async loadInterests(ctx: StateContext<InterestStateModel>) {
-        let loadedInterests: Interest[] = await this.storage.get(
+        const loadedInterests: any[] = await this.storage.get(
             InterestState.STORAGE_KEY
         );
 
-        if (loadedInterests === null) {
-            loadedInterests = [];
-        }
-
-        for (let i = 0; i < loadedInterests.length; i++) {
-            loadedInterests[i].osmLocation = new OpenstreetmapLocation(
-                loadedInterests[i].osmLocation
-            );
+        const interests: Interest[] = [];
+        if (Array.isArray(loadedInterests)) {
+            loadedInterests.forEach(data => {
+                interests.push(new Interest(data));
+            });
         }
 
         const state = ctx.getState();
         ctx.setState({
             ...state,
-            interests: loadedInterests
+            interests: interests
         });
         this.updateSelectedObject(ctx);
     }
