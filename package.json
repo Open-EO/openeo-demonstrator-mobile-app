@@ -16,7 +16,7 @@
     "build-ios": "ionic cordova build ios -- --prod --release --buildFlag=\"-UseModernBuildSystem=0\"",
     "build-android": "ionic cordova build android -- --prod --release -- --packageType=bundle",
     "package-ios": "ionic cordova build ios -- --prod --release --device --codeSignIdentity=\"iPhone Developer\" --buildFlag=\"-UseModernBuildSystem=0\"",
-    "ios-live": "ionic cordova emulate ios -lc --debug --target=\"iPhone-X\" -- --buildFlag=\"-UseModernBuildSystem=0\"",
+    "ios-live": "ionic cordova emulate ios -lc --debug -- --buildFlag=\"-UseModernBuildSystem=0\"",
     "android-live": "ionic cordova emulate android -lc --debug --ssl",
     "prettier:run": "prettier --write \"src/{app,environments,assets,theme}/**/*{.ts,.js,.json,.css,.scss}\"",
     "prettier:check": "prettier -c \"src/{app,environments,assets,theme}/**/*{.ts,.js,.json,.css,.scss}\"",
