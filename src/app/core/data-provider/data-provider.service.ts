@@ -16,11 +16,11 @@
 
 import { Injectable } from '@angular/core';
 import { AuthType, DataProvider } from './data-provider';
-import { Connection, OpenEO } from '@openeo/js-client';
+import { Connection, OpenEO, BasicProvider } from '@openeo/js-client';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { EnvironmentService } from '../environment/environment.service';
 import { Storage } from '@ionic/storage';
-import { sortBy, unionBy } from 'lodash';
+import { sortBy, unionBy, find } from 'lodash';
 
 @Injectable({
     providedIn: 'root'
@@ -162,15 +162,24 @@ export class DataProviderService {
         let connection;
 
         connection = await OpenEO.connect(provider.url);
+        const authProviders = await connection.listAuthProviders();
 
         switch (provider.authType) {
             case AuthType.Basic:
-                await connection.authenticateBasic(
+                const basicAuthProvider = find(
+                    authProviders,
+                    authProvider => authProvider instanceof BasicProvider
+                );
+                await basicAuthProvider.login(
                     provider.authData.username,
                     provider.authData.password
                 );
                 break;
             case AuthType.OIDC:
+                // TODO: OIDC Authentication
+                // const oidcAuthProvider = find(authProviders, (authProvider) => (authProvider instanceof BasicProvider));
+                // await oidcAuthProvider.login();
+
                 await connection.authenticateOIDC(provider.authData.token);
                 break;
         }
