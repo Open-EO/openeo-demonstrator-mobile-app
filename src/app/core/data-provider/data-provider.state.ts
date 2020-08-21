@@ -102,17 +102,19 @@ export class DataProviderState implements NgxsOnInit {
         ctx: StateContext<DataProviderStateModel>,
         action: ToggleDataProvider
     ) {
+        const newDataProviders = [];
         const dataProviders = ctx.getState().dataProviders;
         for (let i = 0; i < dataProviders.length; i++) {
-            if (dataProviders[i].url === action.providerUrl) {
-                dataProviders[i] = await this.service.toggleActive({
+            newDataProviders.push(dataProviders[i]);
+            if (newDataProviders[i].url === action.providerUrl) {
+                newDataProviders[i] = await this.service.toggleActive({
                     ...dataProviders[i]
                 });
             }
         }
 
         ctx.patchState({
-            dataProviders: dataProviders
+            dataProviders: newDataProviders
         });
         ctx.dispatch(new SaveDataProviders());
     }
