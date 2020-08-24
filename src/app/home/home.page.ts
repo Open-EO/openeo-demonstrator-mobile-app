@@ -34,6 +34,7 @@ import { Navigate } from '@ngxs/router-plugin';
 import { IndexData } from '../core/open-eo/index-data';
 import { Location } from '../core/open-eo/location';
 import { InterestPopoverComponent } from '../shared/interest-popover/interest-popover.component';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 
 @Component({
     selector: 'app-home',
@@ -58,7 +59,8 @@ export class HomePage implements OnInit, OnDestroy {
         private interestService: InterestService,
         private store: Store,
         private alertController: AlertController,
-        private popoverController: PopoverController
+        private popoverController: PopoverController,
+        private socialSharing: SocialSharing
     ) {}
 
     public ngOnInit(): void {
@@ -147,6 +149,14 @@ export class HomePage implements OnInit, OnDestroy {
             showBackdrop: true
         });
         await popover.present();
+    }
+
+    public async share() {
+        const options = {
+            url: 'https://www.google.com'
+        };
+
+        await this.socialSharing.shareWithOptions(options);
     }
 
     private async refreshIndexData() {

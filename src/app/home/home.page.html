@@ -29,10 +29,11 @@
                         <ion-button fill="clear" (click)="onFavorise()">
                             <ion-icon
                                     name="star-outline"
-                                    [attr.name]="
-                  selectedInterest.isFavorite ? 'star' : 'star-outline'
-                "
+                                    [attr.name]="selectedInterest.isFavorite ? 'star' : 'star-outline'"
                             ></ion-icon>
+                        </ion-button>
+                        <ion-button fill="clear" (click)="share()">
+                            <ion-icon name="share-social-outline"></ion-icon>
                         </ion-button>
                     </div>
                 </div>

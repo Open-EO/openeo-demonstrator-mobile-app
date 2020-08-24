@@ -43,6 +43,7 @@ import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { environment } from '../environments/environment';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 
 @NgModule({
     declarations: [AppComponent],
@@ -68,7 +69,8 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
         { provide: HAMMER_GESTURE_CONFIG, useClass: HammerConfig },
         Geolocation,
         Keyboard,
-        Diagnostic
+        Diagnostic,
+        SocialSharing
     ],
     bootstrap: [AppComponent]
 })
