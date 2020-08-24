@@ -45,7 +45,7 @@ import { IndexData } from '../open-eo/index-data';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { dateOfTodayWithoutTime, rotatingClamp } from '../utils';
 import { Platform } from '@ionic/angular';
-import { environment } from '../../../environments/environment';
+import { EnvironmentService } from '../environment/environment.service';
 
 export interface InterestStateModel {
     interests: Interest[];
@@ -82,7 +82,8 @@ export class InterestState implements NgxsOnInit {
         private openEOService: OpenEOService,
         private store: Store,
         private diagnostic: Diagnostic,
-        private platform: Platform
+        private platform: Platform,
+        private environment: EnvironmentService
     ) {}
 
     @Selector()
@@ -217,9 +218,13 @@ export class InterestState implements NgxsOnInit {
         }
 
         interest.availableIndices = [];
-        for (let i = 0; i < environment.openEO.indices.indexOrder.length; i++) {
+        for (
+            let i = 0;
+            i < this.environment.openEO.indices.indexOrder.length;
+            i++
+        ) {
             interest.availableIndices.push(
-                new EOIndex(environment.openEO.indices.indexOrder[i])
+                new EOIndex(this.environment.openEO.indices.indexOrder[i])
             );
         }
 
