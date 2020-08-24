@@ -49,6 +49,8 @@ export class OpenstreetmapLocation {
                     data.geoJson.coordinates
                 );
             }
+        } else {
+            data.geoJson = null;
         }
 
         Object.assign(this, data);

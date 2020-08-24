@@ -28,9 +28,11 @@ export class Interest {
     availableIndices: EOIndex[] = [];
 
     constructor(data: any) {
-        if (data.osmLocation) {
+        if (data.osmLocation && !(data instanceof OpenstreetmapLocation)) {
             data.osmLocation = new OpenstreetmapLocation(data.osmLocation);
+            Object.assign(this, data);
+        } else if (data instanceof OpenstreetmapLocation) {
+            this.osmLocation = data;
         }
-        Object.assign(this, data);
     }
 }
