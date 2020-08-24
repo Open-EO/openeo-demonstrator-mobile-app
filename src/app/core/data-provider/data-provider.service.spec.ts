@@ -27,7 +27,7 @@ import { AuthData } from '../open-eo/auth-data';
 import { Storage } from '@ionic/storage';
 
 describe('DataProviderService', () => {
-    const mockEnvironment = environment;
+    const mockEnvironment = { ...environment };
     mockEnvironment.openEO = {
         version: '1.0.0',
         hub: 'http://localhost/hub/api',
