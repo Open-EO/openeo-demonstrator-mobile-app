@@ -19,23 +19,6 @@ describe('InterestState', () => {
     let store: Store;
     let interestsMock: any[];
 
-    const environmentMock = environment;
-    const interestServiceMock = {
-        checkForLocation: async () => null,
-        getLocation: async i => new Interest(interestsMock[i])
-    };
-    const openEOServiceMock = {
-        getLocation: async i => {
-            return interestsMock[i].osmLocation;
-        }
-    };
-    const storageMock = {
-        get: async () => interestsMock,
-        set: async () => null
-    };
-    const diagnosticMock = {
-        registerLocationStateChangeHandler: () => null
-    };
     const geoJson = JSON.stringify({
         type: 'Polygon',
         coordinates: [
@@ -67,6 +50,41 @@ describe('InterestState', () => {
             ]
         ]
     });
+    const randomInterestMock = {
+        osmLocation: {
+            osmId: 9999,
+            name: 'Location ' + 9999,
+            adminLevel: 4,
+            latitude: 43.679216,
+            longitude: 7.96235672,
+            geoJson: geoJson,
+            region: 'Region ' + 9999,
+            latitudeMin: 43.677,
+            latitudeMax: 43.68,
+            longitudeMin: 7.9623,
+            longitudeMax: 7.9625
+        }
+    };
+
+    const environmentMock = environment;
+    const interestServiceMock = {
+        checkForLocation: async () => null,
+        getLocation: async i => {
+            if (interestsMock[i]) {
+                return new Interest(interestsMock[i]);
+            } else {
+                return new Interest(randomInterestMock);
+            }
+        }
+    };
+    const openEOServiceMock = {};
+    const storageMock = {
+        get: async () => interestsMock,
+        set: async () => null
+    };
+    const diagnosticMock = {
+        registerLocationStateChangeHandler: () => null
+    };
 
     beforeEach(() => {
         interestsMock = [];
@@ -164,22 +182,17 @@ describe('InterestState', () => {
     });
 
     it('action SelectInterest', done => {
+        const service = TestBed.get(InterestService);
+        spyOn(service, 'getLocation').and.callThrough();
         TestBed.get(Actions)
             .pipe(ofActionCompleted(LoadInterests))
             .pipe(take(1))
             .subscribe(async () => {
-                await store
-                    .dispatch(
-                        new SelectInterest(interestsMock[0].osmLocation.osmId)
-                    )
-                    .toPromise();
+                await store.dispatch(new SelectInterest(9999)).toPromise();
 
                 const interests = store.selectSnapshot(InterestState.getAll);
                 interests.forEach(item => {
-                    if (
-                        item.osmLocation.osmId ===
-                        interestsMock[0].osmLocation.osmId
-                    ) {
+                    if (item.osmLocation.osmId === 9999) {
                         expect(item.availableIndices.length).toBeGreaterThan(0);
                     }
                 });
@@ -187,9 +200,9 @@ describe('InterestState', () => {
                 const selected = store.selectSnapshot(
                     InterestState.getSelected
                 );
-                expect(selected.osmLocation.osmId).toBe(
-                    interestsMock[0].osmLocation.osmId
-                );
+                expect(selected.osmLocation.osmId).toBe(9999);
+
+                expect(service.getLocation).toHaveBeenCalled();
 
                 done();
             });
