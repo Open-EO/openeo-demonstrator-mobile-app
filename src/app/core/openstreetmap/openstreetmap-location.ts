@@ -42,7 +42,10 @@ export class OpenstreetmapLocation {
     }
 
     constructor(data: any) {
-        if (data.geoJson) {
+        if (
+            data.geoJson &&
+            (typeof data.geoJson === 'string' || data.geoJson instanceof String)
+        ) {
             data.geoJson = JSON.parse(data.geoJson);
             if (data.geoJson.coordinates) {
                 data.geoJson.coordinates = this.simplify(
