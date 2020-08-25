@@ -22,7 +22,7 @@ import {
 } from '../core/interest/interest.actions';
 import { InterestState } from '../core/interest/interest.state';
 import { InterestService } from '../core/interest/interest.service';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Interest } from '../core/interest/interest';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subscription } from 'rxjs';
@@ -35,6 +35,7 @@ import { IndexData } from '../core/open-eo/index-data';
 import { Location } from '../core/open-eo/location';
 import { InterestPopoverComponent } from '../shared/interest-popover/interest-popover.component';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { MapComponent } from '../shared/map/map.component';
 
 @Component({
     selector: 'app-home',
@@ -46,6 +47,9 @@ export class HomePage implements OnInit, OnDestroy {
     public retrievalDate$: Observable<Date>;
     @Select(InterestState.getRetrievalStartDate)
     public retrievalStartDate: Observable<Date>;
+
+    @ViewChild('mapComponent', { static: false })
+    public mapComponent: MapComponent;
 
     public selectedInterest: Interest;
     public currentIndex: EOIndex;
@@ -152,11 +156,15 @@ export class HomePage implements OnInit, OnDestroy {
     }
 
     public async share() {
+        this.mapComponent.cesiumViewer.render();
         const options = {
-            url: 'https://www.google.com'
+            files: [this.mapComponent.cesiumViewer.canvas.toDataURL()]
         };
 
-        await this.socialSharing.shareWithOptions(options);
+        this.socialSharing
+            .shareWithOptions(options)
+            .then(result => console.log(result))
+            .catch(error => console.error(error));
     }
 
     private async refreshIndexData() {

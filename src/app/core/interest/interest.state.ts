@@ -212,7 +212,13 @@ export class InterestState implements NgxsOnInit {
 
         let interest: Interest;
         if (foundInterests && foundInterests.length > 0) {
-            interest = { ...foundInterests[0] };
+            interest = new Interest(foundInterests[0]);
+            if (!foundInterests[0].osmLocation.geoJson) {
+                const newInterest = await this.service.getLocation(
+                    action.osmId
+                );
+                interest.osmLocation.geoJson = newInterest.osmLocation.geoJson;
+            }
         } else {
             interest = await this.service.getLocation(action.osmId);
         }

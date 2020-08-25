@@ -3,7 +3,7 @@
         <div class="safe-area"></div>
         <app-interest-search class="search-bar"></app-interest-search>
         <div class="map">
-            <app-map [interest]="selectedInterest" [canvas]="dataObjectURL" (longPress)="onPressMap($event)"></app-map>
+            <app-map [interest]="selectedInterest" [canvas]="dataObjectURL" (longPress)="onPressMap($event)" #mapComponent></app-map>
         </div>
         <div class="map-loading" *ngIf="selectedInterest && !dataObjectURL">
             <app-loading-indicator text="Please wait while we fetch the latest data for you..."></app-loading-indicator>
