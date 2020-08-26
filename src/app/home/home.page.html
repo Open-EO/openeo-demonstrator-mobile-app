@@ -3,7 +3,7 @@
         <div class="safe-area"></div>
         <app-interest-search class="search-bar"></app-interest-search>
         <div class="map">
-            <app-map [interest]="selectedInterest" [canvas]="dataObjectURL" (longPress)="onPressMap($event)"></app-map>
+            <app-map [interest]="selectedInterest" [canvas]="dataObjectURL" (longPress)="onPressMap($event)" #mapComponent></app-map>
         </div>
         <div class="map-loading" *ngIf="selectedInterest && !dataObjectURL">
             <app-loading-indicator text="Please wait while we fetch the latest data for you..."></app-loading-indicator>
@@ -29,10 +29,11 @@
                         <ion-button fill="clear" (click)="onFavorise()">
                             <ion-icon
                                     name="star-outline"
-                                    [attr.name]="
-                  selectedInterest.isFavorite ? 'star' : 'star-outline'
-                "
+                                    [attr.name]="selectedInterest.isFavorite ? 'star' : 'star-outline'"
                             ></ion-icon>
+                        </ion-button>
+                        <ion-button fill="clear" (click)="share()">
+                            <ion-icon name="share-social-outline"></ion-icon>
                         </ion-button>
                     </div>
                 </div>

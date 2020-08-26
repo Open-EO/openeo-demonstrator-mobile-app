@@ -45,6 +45,7 @@ export class MapComponent implements AfterViewInit {
         tileMatrixSetID: 'g',
         maximumLevel: 19
     };
+    public cesiumViewer: any;
 
     @Input()
     public set canvas(value) {
@@ -100,7 +101,6 @@ export class MapComponent implements AfterViewInit {
 
     private geoJson: any;
     private geoJsonDataSource: any;
-    private cesiumViewer: any;
     private _interest: Interest;
     private imageEntity: any = null;
 
