@@ -47,7 +47,7 @@ export class HomePage implements OnInit, OnDestroy {
     public retrievalDate$: Observable<Date>;
     @Select(InterestState.getRetrievalStartDate)
     public retrievalStartDate: Observable<Date>;
-
+    public isLoading = false;
     @ViewChild('mapComponent', { static: false })
     public mapComponent: MapComponent;
 
@@ -107,12 +107,18 @@ export class HomePage implements OnInit, OnDestroy {
         this.subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
+    /**
+     * Called automatically by Ionic
+     */
     public async ionViewWillEnter() {
         this.isActivePage = true;
         this.showPromptIfNoActiveProviders();
         this.refreshIndexData();
     }
 
+    /**
+     * Called automatically by Ionic
+     */
     public ionViewWillLeave() {
         this.isActivePage = false;
     }
@@ -128,12 +134,14 @@ export class HomePage implements OnInit, OnDestroy {
 
     public async onSwipeLeft(event) {
         if (this.selectedInterest) {
+            this.isLoading = true;
             this.store.dispatch(new NextIndex());
         }
     }
 
     public async onSwipeRight(event) {
         if (this.selectedInterest) {
+            this.isLoading = true;
             this.store.dispatch(new PreviousIndex());
         }
     }
@@ -169,6 +177,7 @@ export class HomePage implements OnInit, OnDestroy {
 
     private async refreshIndexData() {
         if (this.isDataProvidersInitialized) {
+            this.isLoading = true;
             this.store.dispatch(new LoadCurrentIndexData());
         }
     }
@@ -176,6 +185,7 @@ export class HomePage implements OnInit, OnDestroy {
     private updateCanvas(data: IndexData) {
         if (data && data.canvas) {
             this.dataObjectURL = data.canvas;
+            this.isLoading = false;
         } else {
             this.dataObjectURL = null;
         }

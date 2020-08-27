@@ -5,7 +5,7 @@
         <div class="map">
             <app-map [interest]="selectedInterest" [canvas]="dataObjectURL" (longPress)="onPressMap($event)" #mapComponent></app-map>
         </div>
-        <div class="map-loading" *ngIf="selectedInterest && !dataObjectURL">
+        <div class="map-loading" *ngIf="isLoading">
             <app-loading-indicator text="Please wait while we fetch the latest data for you..."></app-loading-indicator>
         </div>
         <app-color-scale-legend></app-color-scale-legend>
