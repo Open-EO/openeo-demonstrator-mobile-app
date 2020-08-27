@@ -29,10 +29,11 @@ export class Interest {
 
     constructor(data: any) {
         if (data.osmLocation && !(data instanceof OpenstreetmapLocation)) {
+            data = { ...data };
             data.osmLocation = new OpenstreetmapLocation(data.osmLocation);
             Object.assign(this, data);
         } else if (data instanceof OpenstreetmapLocation) {
-            this.osmLocation = data;
+            this.osmLocation = new OpenstreetmapLocation(data);
         }
     }
 }

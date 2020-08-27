@@ -21,7 +21,8 @@ describe('InterestState', () => {
 
     const environmentMock = environment;
     const interestServiceMock = {
-        checkForLocation: async () => null
+        checkForLocation: async () => null,
+        getLocation: async i => new Interest(interestsMock[i])
     };
     const openEOServiceMock = {
         getLocation: async i => {
