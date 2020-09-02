@@ -143,10 +143,13 @@ export class OpenEOService {
         return indexData;
     }
 
-    public async blobToRaster(index: EOIndex, data: Blob): Promise<any> {
+    public async blobToRaster(
+        index: EOIndex,
+        data: { costs: any; data: Blob; logs: any }
+    ): Promise<any> {
         const canvas: HTMLCanvasElement = this.renderer.createElement('canvas');
 
-        const objectUrl = URL.createObjectURL(data);
+        const objectUrl = URL.createObjectURL(data.data);
         const image = new Image();
 
         const promise = new Promise<any>((resolve, reject) => {
