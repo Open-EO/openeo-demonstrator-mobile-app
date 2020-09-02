@@ -14,10 +14,27 @@
  * limitations under the License.
  */
 
-.interest-popover-wrapper {
-    padding: 0 0 0 14px;
+ion-item-sliding {
+    &.item-sliding-active-slide {
+        ion-item {
+            background: var(--ion-color-dark) !important;
+        }
+    }
+}
 
-    ion-list {
-        padding: 0;
+ion-item {
+    padding: 0 16px 0 16px;
+    transition: background-color 200ms ease-in-out;
+
+    img {
+        width: 20%;
+        margin-right: 20px;
+        align-self: start;
+        padding-top: 16px;
+    }
+
+    .description {
+        white-space: pre-wrap;
+        padding-top: 10px;
     }
 }

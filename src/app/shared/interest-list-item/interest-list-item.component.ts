@@ -20,7 +20,8 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
     selector: 'app-interest-list-item',
-    templateUrl: './interest-list-item.component.html'
+    templateUrl: './interest-list-item.component.html',
+    styleUrls: ['interest-list-item.component.scss']
 })
 export class InterestListItemComponent {
     public adminLevels = environment.openstreetmap.admin_levels;

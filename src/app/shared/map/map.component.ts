@@ -49,60 +49,21 @@ export class MapComponent implements AfterViewInit {
 
     @Input()
     public set canvas(value) {
-        if (this.imageEntity !== null) {
-            this.cesiumViewer.entities.remove(this.imageEntity);
-        }
-
-        if (!value || !this._interest) {
-            return;
-        }
-
-        const boundingBox = this._interest.osmLocation.boundingBox;
-
-        this.imageEntity = this.cesiumViewer.entities.add({
-            rectangle: {
-                coordinates: Cesium.Rectangle.fromDegrees(
-                    boundingBox.minLongitude,
-                    boundingBox.minLatitude,
-                    boundingBox.maxLongitude,
-                    boundingBox.maxLatitude
-                ),
-                material: new Cesium.ImageMaterialProperty({
-                    image: value,
-                    transparent: true
-                })
-            }
-        });
+        this._canvas = value;
+        this.updateMap();
     }
 
     @Input()
     public set interest(value: Interest) {
-        if (value && value.osmLocation && value.osmLocation.geoJson) {
-            this._interest = value;
-            this.geoJson = value.osmLocation.geoJson;
-            Cesium.GeoJsonDataSource.load(this.geoJson, {
-                stroke: Cesium.Color.DARKBLUE,
-                fill: Cesium.Color.TRANSPARENT,
-                strokeWidth: 3
-            }).then(dataSource => {
-                this.cesiumViewer.dataSources.remove(this.geoJsonDataSource);
-                this.geoJsonDataSource = dataSource;
-                this.cesiumViewer.dataSources.add(this.geoJsonDataSource);
-                this.cesiumViewer.flyTo(this.geoJsonDataSource, {
-                    offset: new Cesium.HeadingPitchRange(
-                        0,
-                        Cesium.Math.toRadians(-90),
-                        0
-                    )
-                });
-            });
-        }
+        this._interest = value;
+        this.updateMap();
     }
 
     private geoJson: any;
     private geoJsonDataSource: any;
-    private _interest: Interest;
     private imageEntity: any = null;
+    private _interest: Interest;
+    private _canvas: any;
 
     public ngAfterViewInit() {
         this.cesiumViewer = new Cesium.Viewer(this.cesiumMap.nativeElement, {
@@ -148,6 +109,61 @@ export class MapComponent implements AfterViewInit {
                     Cesium.Math.toDegrees(coordinates.longitude)
                 )
             );
+        }
+    }
+
+    private updateMap() {
+        if (this.imageEntity !== null) {
+            this.cesiumViewer.entities.remove(this.imageEntity);
+        }
+
+        if (this._interest) {
+            this.updateInterest();
+
+            if (this._canvas) {
+                this.updateDataImage();
+            }
+        }
+    }
+
+    private updateDataImage() {
+        const boundingBox = this._interest.osmLocation.boundingBox;
+
+        this.imageEntity = this.cesiumViewer.entities.add({
+            rectangle: {
+                coordinates: Cesium.Rectangle.fromDegrees(
+                    boundingBox.minLongitude,
+                    boundingBox.minLatitude,
+                    boundingBox.maxLongitude,
+                    boundingBox.maxLatitude
+                ),
+                material: new Cesium.ImageMaterialProperty({
+                    image: this._canvas,
+                    transparent: true
+                })
+            }
+        });
+    }
+
+    private updateInterest() {
+        if (this._interest.osmLocation && this._interest.osmLocation.geoJson) {
+            this.geoJson = this._interest.osmLocation.geoJson;
+            Cesium.GeoJsonDataSource.load(this.geoJson, {
+                stroke: Cesium.Color.DARKBLUE,
+                fill: Cesium.Color.TRANSPARENT,
+                strokeWidth: 3
+            }).then(dataSource => {
+                this.cesiumViewer.dataSources.remove(this.geoJsonDataSource);
+                this.geoJsonDataSource = dataSource;
+                this.cesiumViewer.dataSources.add(this.geoJsonDataSource);
+                this.cesiumViewer.flyTo(this.geoJsonDataSource, {
+                    offset: new Cesium.HeadingPitchRange(
+                        0,
+                        Cesium.Math.toRadians(-90),
+                        0
+                    )
+                });
+            });
         }
     }
 }

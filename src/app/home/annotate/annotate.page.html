@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Annotate location</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <p style="text-align: center">
+    <img src="{{annotation.imageDataUrl}}" alt="current index" *ngIf="annotation.imageDataUrl" style="width: 50%">
+  </p>
+  <p>
+    Annotating a location will save the currently selected location with the selected date range and index
+    to the list of saved locations. From there, you will be able to quickly re-visit the exact view you have
+    in from of you right now.
+  </p>
+
+  <ion-input placeholder="Title" [(ngModel)]="annotation.title" type="text" required="true"></ion-input>
+  <ion-textarea placeholder="Enter more information here..." [(ngModel)]="annotation.description" rows="3" autoGrow="true"></ion-textarea>
+  <ion-button size="block" color="primary" (click)="save()">Save</ion-button>
+
+</ion-content>

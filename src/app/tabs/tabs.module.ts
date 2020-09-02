@@ -39,6 +39,11 @@ const routes: Routes = [
                         path: 'date-settings',
                         loadChildren:
                             '../home/date-settings/date-settings.module#DateSettingsPageModule'
+                    },
+                    {
+                        path: 'annotate',
+                        loadChildren:
+                            '../home/annotate/annotate.module#AnnotatePageModule'
                     }
                 ]
             },
@@ -51,6 +56,10 @@ const routes: Routes = [
                 path: 'favorite-locations',
                 loadChildren:
                     '../favorite-locations/favorite-locations.module#FavoriteLocationsPageModule'
+            },
+            {
+                path: 'saved-locations',
+                loadChildren: '../saved/saved.module#SavedPageModule'
             },
             {
                 path: 'open-eo',

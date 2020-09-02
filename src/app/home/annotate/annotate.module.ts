@@ -14,10 +14,27 @@
  * limitations under the License.
  */
 
-.interest-popover-wrapper {
-    padding: 0 0 0 14px;
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
+import { AnnotatePage } from './annotate.page';
+import { RouterModule, Routes } from '@angular/router';
 
-    ion-list {
-        padding: 0;
+const routes: Routes = [
+    {
+        path: '',
+        component: AnnotatePage
     }
-}
+];
+
+@NgModule({
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        RouterModule.forChild(routes)
+    ],
+    declarations: [AnnotatePage]
+})
+export class AnnotatePageModule {}

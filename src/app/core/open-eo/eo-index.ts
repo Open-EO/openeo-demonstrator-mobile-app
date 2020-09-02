@@ -18,7 +18,7 @@ import { environment } from '../../../environments/environment';
 import * as d3 from 'd3';
 
 export class EOIndex {
-    private key: string;
+    public key: string;
 
     public get title(): string {
         return environment.openEO.indices[this.key].title;

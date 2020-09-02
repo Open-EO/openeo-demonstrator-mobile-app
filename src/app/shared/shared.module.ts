@@ -27,31 +27,41 @@ import { ServersPopoverComponent } from './servers-popover/servers-popover.compo
 import { RouterModule } from '@angular/router';
 import { ColorScaleLegendComponent } from './color-scale-legend/color-scale-legend.component';
 import { InterestPopoverComponent } from './interest-popover/interest-popover.component';
+import { HomeActionsPopoverComponent } from './home-actions-popover/home-actions-popover.component';
+import { AnnotationListItemComponent } from './annotation-list-item/annotation-list-item.component';
 
 @NgModule({
     declarations: [
         InterestSearchComponent,
         InterestListItemComponent,
+        AnnotationListItemComponent,
         MapComponent,
         IndexSliderComponent,
         LoadingIndicatorComponent,
         CodeComponent,
         ServersPopoverComponent,
         InterestPopoverComponent,
+        HomeActionsPopoverComponent,
         ColorScaleLegendComponent
     ],
     imports: [CommonModule, RouterModule, IonicModule],
-    entryComponents: [ServersPopoverComponent, InterestPopoverComponent],
+    entryComponents: [
+        ServersPopoverComponent,
+        InterestPopoverComponent,
+        HomeActionsPopoverComponent
+    ],
     exports: [
         CommonModule,
         InterestSearchComponent,
         InterestListItemComponent,
+        AnnotationListItemComponent,
         MapComponent,
         IndexSliderComponent,
         LoadingIndicatorComponent,
         CodeComponent,
         ServersPopoverComponent,
         InterestPopoverComponent,
+        HomeActionsPopoverComponent,
         ColorScaleLegendComponent
     ]
 })

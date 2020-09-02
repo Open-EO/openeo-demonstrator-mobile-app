@@ -41,6 +41,11 @@ export class PreviousIndex {
     constructor() {}
 }
 
+export class SelectIndex {
+    static readonly type = '[Interests] Select Index';
+    constructor(public indexKey: string) {}
+}
+
 export class LoadCurrentIndexData {
     static readonly type = '[Interests] Load Current EO Index Data';
 }
@@ -61,4 +66,10 @@ export class UpdateRetrievalTimespan {
     static readonly type = '[Interests] Update Retrieval Timespan';
 
     constructor(public retrievalTimespan: number) {}
+}
+
+export class GPSStateChanged {
+    static readonly type = '[Interests] GPS State Changed';
+
+    constructor() {}
 }

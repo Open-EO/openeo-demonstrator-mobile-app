@@ -36,6 +36,10 @@ import { Location } from '../core/open-eo/location';
 import { InterestPopoverComponent } from '../shared/interest-popover/interest-popover.component';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { MapComponent } from '../shared/map/map.component';
+import {
+    HomeActionsPopoverComponent,
+    HomeActionsPopoverValues
+} from '../shared/home-actions-popover/home-actions-popover.component';
 
 @Component({
     selector: 'app-home',
@@ -113,7 +117,6 @@ export class HomePage implements OnInit, OnDestroy {
     public async ionViewWillEnter() {
         this.isActivePage = true;
         this.showPromptIfNoActiveProviders();
-        this.refreshIndexData();
     }
 
     /**
@@ -121,15 +124,6 @@ export class HomePage implements OnInit, OnDestroy {
      */
     public ionViewWillLeave() {
         this.isActivePage = false;
-    }
-
-    public onFavorise() {
-        this.store.dispatch(
-            new FavoriseInterest(
-                this.selectedInterest.osmLocation.osmId,
-                !this.selectedInterest.isFavorite
-            )
-        );
     }
 
     public async onSwipeLeft(event) {
@@ -163,10 +157,35 @@ export class HomePage implements OnInit, OnDestroy {
         await popover.present();
     }
 
-    public async share() {
-        this.mapComponent.cesiumViewer.render();
+    public async actions(event) {
+        let popover = null;
+        popover = await this.popoverController.create({
+            component: HomeActionsPopoverComponent,
+            componentProps: {
+                popover: popover
+            },
+            event: event,
+            animated: true,
+            showBackdrop: true
+        });
+        await popover.present();
+        const result = await popover.onDidDismiss();
+        switch (result.data) {
+            case HomeActionsPopoverValues.Favorise:
+                await this.favorise();
+                break;
+            case HomeActionsPopoverValues.Share:
+                await this.share();
+                break;
+            case HomeActionsPopoverValues.Annotate:
+                await this.annotate();
+                break;
+        }
+    }
+
+    private async share() {
         const options = {
-            files: [this.mapComponent.cesiumViewer.canvas.toDataURL()]
+            files: [this.getMapImageDataUrl()]
         };
 
         this.socialSharing
@@ -175,9 +194,33 @@ export class HomePage implements OnInit, OnDestroy {
             .catch(error => console.error(error));
     }
 
+    private async annotate() {
+        this.store.dispatch(
+            new Navigate(['/tabs/home/annotate'], null, {
+                state: { dataUrl: this.getMapImageDataUrl() }
+            })
+        );
+    }
+
+    private async favorise() {
+        await this.store.dispatch(
+            new FavoriseInterest(
+                this.selectedInterest.osmLocation.osmId,
+                !this.selectedInterest.isFavorite
+            )
+        );
+    }
+
+    private getMapImageDataUrl(): string {
+        this.mapComponent.cesiumViewer.render();
+
+        return this.mapComponent.cesiumViewer.canvas.toDataURL();
+    }
+
     private async refreshIndexData() {
         if (this.isDataProvidersInitialized) {
             this.isLoading = true;
+            this.dataObjectURL = null;
             this.store.dispatch(new LoadCurrentIndexData());
         }
     }
@@ -186,8 +229,6 @@ export class HomePage implements OnInit, OnDestroy {
         if (data && data.canvas) {
             this.dataObjectURL = data.canvas;
             this.isLoading = false;
-        } else {
-            this.dataObjectURL = null;
         }
     }
 

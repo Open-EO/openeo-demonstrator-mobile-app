@@ -144,9 +144,9 @@ export class InterestService {
         const isLocationEnabled = await this.diagnostic.isLocationEnabled();
 
         if (isLocationEnabled === true) {
-            this.getInterestForGPS();
+            await this.getInterestForGPS();
         } else {
-            this.askForLocationService();
+            await this.askForLocationService();
         }
     }
 }

@@ -1,3 +1,19 @@
+/**
+ * Copyright 2020 Solenix Schweiz GmbH
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Actions, NgxsModule, ofActionCompleted, Store } from '@ngxs/store';
 import { TestBed } from '@angular/core/testing';
 import { take } from 'rxjs/operators';
@@ -10,7 +26,6 @@ import {
     LoadInterests,
     SelectInterest
 } from './interest.actions';
-import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { Interest } from './interest';
 import { environment } from '../../../environments/environment';
 import { EnvironmentService } from '../environment/environment.service';
@@ -82,9 +97,6 @@ describe('InterestState', () => {
         get: async () => interestsMock,
         set: async () => null
     };
-    const diagnosticMock = {
-        registerLocationStateChangeHandler: () => null
-    };
 
     beforeEach(() => {
         interestsMock = [];
@@ -122,10 +134,6 @@ describe('InterestState', () => {
                     useValue: storageMock
                 },
                 {
-                    provide: Diagnostic,
-                    useValue: diagnosticMock
-                },
-                {
                     provide: EnvironmentService,
                     useValue: environmentMock
                 }
@@ -135,22 +143,19 @@ describe('InterestState', () => {
         store = TestBed.get(Store);
     });
 
-    it('should be initialised', done => {
-        TestBed.get(Actions)
-            .pipe(ofActionCompleted(LoadInterests))
-            .pipe(take(1))
-            .subscribe(() => {
-                const interests = store.selectSnapshot(InterestState.getAll);
-                expect(interests.length).toBe(interestsMock.length);
-                interests.forEach(item => {
-                    expect(item instanceof Interest).toBeTruthy();
-                });
+    it('should be initialised', async done => {
+        await store.dispatch(new LoadInterests());
+        const interests = store.selectSnapshot(InterestState.getAll);
+        expect(interests.length).toBe(interestsMock.length);
+        interests.forEach(item => {
+            expect(item instanceof Interest).toBeTruthy();
+        });
 
-                done();
-            });
+        done();
     });
 
-    it('action FavoriseInterest', done => {
+    it('action FavoriseInterest', async done => {
+        await store.dispatch(new LoadInterests());
         TestBed.get(Actions)
             .pipe(ofActionCompleted(LoadInterests))
             .pipe(take(1))
@@ -181,7 +186,8 @@ describe('InterestState', () => {
             });
     });
 
-    it('action SelectInterest', done => {
+    it('action SelectInterest', async done => {
+        await store.dispatch(new LoadInterests());
         const service = TestBed.get(InterestService);
         spyOn(service, 'getLocation').and.callThrough();
         TestBed.get(Actions)

@@ -19,51 +19,45 @@ import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Store } from '@ngxs/store';
-import { DataProviderState } from './core/data-provider/data-provider.state';
-import { Subscription } from 'rxjs';
+import {
+    GPSStateChanged,
+    LoadInterests
+} from './core/interest/interest.actions';
+import { LoadAnnotations } from './core/annotation/annotation.actions';
+import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 
 @Component({
     selector: 'app-root',
     templateUrl: 'app.component.html'
 })
 export class AppComponent {
-    private dataProvidersInitialized = false;
-    private subscriptions: Subscription[] = [];
-
     constructor(
         private platform: Platform,
         private splashScreen: SplashScreen,
         private statusBar: StatusBar,
-        private store: Store
+        private store: Store,
+        private diagnostic: Diagnostic
     ) {
         this.initializeApp();
     }
 
-    initializeApp() {
-        this.platform.ready().then(() => {
+    public async initializeApp() {
+        this.platform.ready().then(async () => {
             this.statusBar.styleLightContent();
 
-            this.subscriptions.push(
-                this.store
-                    .select(DataProviderState.isInitialized)
-                    .subscribe((initialized: boolean) => {
-                        this.dataProvidersInitialized = initialized;
-                        this.isFullyInitialized();
-                    })
-            );
+            await this.store
+                .dispatch([new LoadInterests(), new LoadAnnotations()])
+                .toPromise();
+
+            this.isFullyInitialized();
         });
     }
 
-    private unsubscribe() {
-        for (const subscription of this.subscriptions) {
-            subscription.unsubscribe();
-        }
-    }
-
     private isFullyInitialized() {
-        if (this.dataProvidersInitialized === true) {
-            this.unsubscribe();
-            this.splashScreen.hide();
-        }
+        this.splashScreen.hide();
+        this.diagnostic.registerLocationStateChangeHandler(() =>
+            this.store.dispatch(new GPSStateChanged())
+        );
+        this.store.dispatch(new GPSStateChanged());
     }
 }

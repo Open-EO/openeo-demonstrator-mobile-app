@@ -1,0 +1,11 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Annotated locations</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-no-padding">
+  <ion-list inset="false" lines="inset">
+    <app-annotation-list-item *ngFor="let annotation of (annotations$ | async)" [annotation]="annotation" (selected)="select($event)"></app-annotation-list-item>
+  </ion-list>
+</ion-content>

@@ -44,6 +44,7 @@ import { environment } from '../environments/environment';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { AnnotationState } from './core/annotation/annotation.state';
 
 @NgModule({
     declarations: [AppComponent],
@@ -54,9 +55,12 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
         IonicStorageModule.forRoot(),
         HttpClientModule,
         CoreModule,
-        NgxsModule.forRoot([InterestState, DataProviderState], {
-            developmentMode: !environment.production
-        }),
+        NgxsModule.forRoot(
+            [InterestState, DataProviderState, AnnotationState],
+            {
+                developmentMode: !environment.production
+            }
+        ),
         NgxsRouterPluginModule.forRoot(),
         NgxsLoggerPluginModule.forRoot(),
         AppRoutingModule

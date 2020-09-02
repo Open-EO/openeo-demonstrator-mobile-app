@@ -25,7 +25,9 @@ import {
     LoadCurrentIndexData,
     UpdateIndexData,
     UpdateRetrievalDate,
-    UpdateRetrievalTimespan
+    UpdateRetrievalTimespan,
+    GPSStateChanged,
+    SelectIndex
 } from './interest.actions';
 import { Interest } from './interest';
 import {
@@ -37,12 +39,10 @@ import {
     Store
 } from '@ngxs/store';
 import { Storage } from '@ionic/storage';
-import { remove, findIndex } from 'lodash';
+import { remove, findIndex, find } from 'lodash';
 import { EOIndex } from '../open-eo/eo-index';
-import { OpenstreetmapLocation } from '../openstreetmap/openstreetmap-location';
 import { OpenEOService } from '../open-eo/open-eo.service';
 import { IndexData } from '../open-eo/index-data';
-import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { dateOfTodayWithoutTime, rotatingClamp } from '../utils';
 import { Platform } from '@ionic/angular';
 import { EnvironmentService } from '../environment/environment.service';
@@ -81,7 +81,6 @@ export class InterestState implements NgxsOnInit {
         private service: InterestService,
         private openEOService: OpenEOService,
         private store: Store,
-        private diagnostic: Diagnostic,
         private platform: Platform,
         private environment: EnvironmentService
     ) {}
@@ -89,6 +88,12 @@ export class InterestState implements NgxsOnInit {
     @Selector()
     public static getAll(state: InterestStateModel) {
         return state.interests;
+    }
+
+    @Selector()
+    public static getByOsmId(state: InterestStateModel) {
+        return (id: number) =>
+            find(state.interests, item => item.osmLocation.osmId === id);
     }
 
     @Selector()
@@ -137,21 +142,6 @@ export class InterestState implements NgxsOnInit {
     }
 
     public async ngxsOnInit(ctx: StateContext<InterestStateModel>) {
-        this.platform.ready().then(async () => {
-            ctx.dispatch(new LoadInterests());
-
-            // Update location whenever Geolocation services become available and no location has been selected yet
-            this.diagnostic.registerLocationStateChangeHandler(async () => {
-                if (!ctx.getState().selected) {
-                    await this.service.checkForLocation();
-                }
-            });
-
-            if (!ctx.getState().selected) {
-                await this.service.checkForLocation();
-            }
-        });
-
         const state = ctx.getState();
         ctx.patchState({
             retrievalStartDate: this.calculateStartDate(
@@ -159,6 +149,13 @@ export class InterestState implements NgxsOnInit {
                 state.retrievalTimespan
             )
         });
+    }
+
+    @Action(GPSStateChanged)
+    public async gpsStateChanged(ctx: StateContext<InterestStateModel>) {
+        if (!ctx.getState().selected) {
+            await this.service.checkForLocation();
+        }
     }
 
     @Action(LoadInterests)
@@ -227,12 +224,13 @@ export class InterestState implements NgxsOnInit {
         }
 
         originalInterests.unshift(interest);
+        await this.storage.set(InterestState.STORAGE_KEY, originalInterests);
+
         ctx.patchState({
             interests: originalInterests,
             selected: interest,
             currentIndexId: 0,
-            currentIndex: interest.availableIndices[0],
-            currentIndexData: null
+            currentIndex: interest.availableIndices[0]
         });
     }
 
@@ -247,8 +245,7 @@ export class InterestState implements NgxsOnInit {
 
         ctx.patchState({
             currentIndexId: nextIndex,
-            currentIndex: state.selected.availableIndices[nextIndex],
-            currentIndexData: null
+            currentIndex: state.selected.availableIndices[nextIndex]
         });
     }
 
@@ -263,8 +260,22 @@ export class InterestState implements NgxsOnInit {
 
         ctx.patchState({
             currentIndexId: nextIndex,
-            currentIndex: state.selected.availableIndices[nextIndex],
-            currentIndexData: null
+            currentIndex: state.selected.availableIndices[nextIndex]
+        });
+    }
+
+    @Action(SelectIndex)
+    public selectIndex(
+        ctx: StateContext<InterestStateModel>,
+        action: SelectIndex
+    ) {
+        const availableIndices = ctx.getState().selected.availableIndices;
+        const eoIndexId = availableIndices.findIndex(
+            value => value.key === action.indexKey
+        );
+        ctx.patchState({
+            currentIndexId: eoIndexId,
+            currentIndex: availableIndices[eoIndexId]
         });
     }
 
@@ -290,7 +301,14 @@ export class InterestState implements NgxsOnInit {
         ctx: StateContext<InterestStateModel>,
         action: UpdateIndexData
     ) {
+        // Reset the current data in case the same data object is set again to make sure
+        // the currentIndexData observable is fired in any case
+        ctx.patchState({
+            currentIndexData: null
+        });
+
         const state = ctx.getState();
+
         if (!state.indexDataCache.has(action.data.cacheId)) {
             ctx.patchState({
                 indexDataCache: state.indexDataCache.set(
@@ -301,7 +319,7 @@ export class InterestState implements NgxsOnInit {
         }
 
         if (
-            state.currentIndex === action.data.index &&
+            state.currentIndex.key === action.data.index.key &&
             state.selected.osmLocation.osmId === action.data.location.osmId
         ) {
             ctx.patchState({

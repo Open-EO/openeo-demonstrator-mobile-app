@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-.interest-popover-wrapper {
-    padding: 0 0 0 14px;
+ion-textarea {
+    background: var(--ion-color-dark) !important;
+    border-bottom: 3px solid var(--ion-color-secondary);
+    transition: border-bottom-color 200ms ease-in-out;
 
-    ion-list {
-        padding: 0;
+    &:focus-within {
+        border-bottom-color: var(--ion-color-primary);
     }
 }

@@ -13,11 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { Annotation } from './annotation';
 
-.interest-popover-wrapper {
-    padding: 0 0 0 14px;
+export class LoadAnnotations {
+    static readonly type = '[Annotation] Load All';
+    constructor() {}
+}
 
-    ion-list {
-        padding: 0;
-    }
+export class SaveAnnotation {
+    static readonly type = '[Annotation] Save';
+    constructor(public payload: Annotation) {}
+}
+
+export class RemoveAnnotation {
+    static readonly type = '[Annotation] Remove';
+    constructor(public payload: Annotation) {}
+}
+
+export class SelectAnnotation {
+    static readonly type = '[Annotation] Select';
+    constructor(public payload: Annotation) {}
 }

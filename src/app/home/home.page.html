@@ -26,14 +26,8 @@
                         </p>
                     </div>
                     <div class="actions">
-                        <ion-button fill="clear" (click)="onFavorise()">
-                            <ion-icon
-                                    name="star-outline"
-                                    [attr.name]="selectedInterest.isFavorite ? 'star' : 'star-outline'"
-                            ></ion-icon>
-                        </ion-button>
-                        <ion-button fill="clear" (click)="share()">
-                            <ion-icon name="share-social-outline"></ion-icon>
+                        <ion-button fill="clear" (click)="actions($event)">
+                            <ion-icon name="ellipsis-vertical-outline"></ion-icon>
                         </ion-button>
                     </div>
                 </div>

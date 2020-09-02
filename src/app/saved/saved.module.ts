@@ -18,14 +18,14 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { DateSettingsPage } from './date-settings.page';
+import { SavedPage } from './saved.page';
 import { RouterModule, Routes } from '@angular/router';
-import { SharedModule } from '../../shared/shared.module';
+import { SharedModule } from '../shared/shared.module';
 
 const routes: Routes = [
     {
         path: '',
-        component: DateSettingsPage
+        component: SavedPage
     }
 ];
 
@@ -34,9 +34,9 @@ const routes: Routes = [
         CommonModule,
         FormsModule,
         IonicModule,
-        RouterModule.forChild(routes),
-        SharedModule
+        SharedModule,
+        RouterModule.forChild(routes)
     ],
-    declarations: [DateSettingsPage]
+    declarations: [SavedPage]
 })
-export class DateSettingsPageModule {}
+export class SavedPageModule {}

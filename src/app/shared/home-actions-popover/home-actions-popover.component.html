@@ -1,0 +1,16 @@
+<ion-button fill="clear" (click)="favorise()">
+  <ion-icon
+          name="star-outline"
+          slot="start"
+          [attr.name]="(selectedInterest$ | async)?.isFavorite ? 'star' : 'star-outline'"
+  ></ion-icon>
+  Mark as favourite
+</ion-button>
+<ion-button fill="clear" (click)="share()">
+  <ion-icon slot="start" name="share-social-outline"></ion-icon>
+  Share...
+</ion-button>
+<ion-button fill="clear" (click)="annotate()">
+  <ion-icon slot="start" name="pricetag-outline"></ion-icon>
+  Annotate...
+</ion-button>

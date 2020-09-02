@@ -1,0 +1,21 @@
+<ion-item-sliding>
+  <ion-item-options side="end">
+    <ion-item-option color="danger" (click)="remove()" expandable="true">
+      <ion-icon name="trash-outline" slot="start" size="large"></ion-icon>
+      Delete
+    </ion-item-option>
+  </ion-item-options>
+<ion-item (click)="select()" detail="true" button="false" class="ion-no-padding">
+  <img [src]="annotation.imageDataUrl" slot="start" *ngIf="annotation" alt="preview">
+  <ion-label>
+    <h2>{{ annotation?.title }}</h2>
+    <p *ngIf="annotation">
+      <ion-icon name="location-outline"></ion-icon> {{ (interest$ | async)?.osmLocation.name }}<br>
+      <ion-icon name="calendar-outline"></ion-icon> {{ annotation.retrievalStartDate | date:'mediumDate' }} - {{ annotation.retrievalDate | date:'mediumDate' }}<br>
+      <ion-icon name="school-outline"></ion-icon> {{ environment.openEO.indices[annotation.eoIndexKey].title }}<br>
+    </p>
+
+    <p *ngIf="annotation?.description" class="description">{{annotation.description}}</p>
+  </ion-label>
+</ion-item>
+</ion-item-sliding>

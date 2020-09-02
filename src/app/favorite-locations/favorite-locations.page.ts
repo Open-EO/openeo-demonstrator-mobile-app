@@ -21,6 +21,7 @@ import { InterestState } from '../core/interest/interest.state';
 import { Interest } from '../core/interest/interest';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { Navigate } from '@ngxs/router-plugin';
 
 @Component({
     selector: 'app-favorite-locations',
@@ -32,8 +33,10 @@ export class FavoriteLocationsPage {
 
     constructor(private store: Store, private router: Router) {}
 
-    public onSelectInterest(interest: Interest) {
-        this.store.dispatch(new SelectInterest(interest.osmLocation.osmId));
-        this.router.navigate(['/tabs/home']);
+    public async onSelectInterest(interest: Interest) {
+        await this.store
+            .dispatch(new SelectInterest(interest.osmLocation.osmId))
+            .toPromise();
+        await this.store.dispatch(new Navigate(['/tabs/home'])).toPromise();
     }
 }
