@@ -9,23 +9,34 @@
 
 <ion-content class="ion-padding">
     <h2>{{ capabilities?.title() }}</h2>
-
-    <ion-card class="ion-no-margin" *ngIf="provider.isAvailable" color="light">
-        <ion-card-content>
-            <p *ngIf="provider?.collectionId">
-                You are currently using the collection <strong>"{{ provider?.collectionId }}"</strong> for processing on this backend.
-            </p>
-            <p *ngIf="!provider?.collectionId">
-                You have not yet defined which collection to use for processing. Please select one in the list of collections.
-            </p>
-        </ion-card-content>
-    </ion-card>
-
     <p [innerHTML]="description"></p>
     <p>
         <strong>API version:</strong> {{ capabilities?.apiVersion() }}<br>
         <strong>Backend version:</strong> {{ capabilities?.backendVersion() }}
     </p>
+
+    <ion-card class="ion-no-margin" *ngIf="provider.isAvailable" color="light">
+        <ion-card-content *ngIf="provider?.collectionId">
+            <p>
+                You are currently using the collection <strong>"{{ provider?.collectionId }}"</strong> for processing on this backend.
+            </p>
+            <ion-button expand="block" color="secondary" routerLink="/tabs/open-eo/provider-info/bands-setup" routerDirection="forward">
+                Set up bands to use
+            </ion-button>
+            <ion-button expand="block" color="secondary" routerLink="/tabs/open-eo/provider-info/collections" routerDirection="forward">
+                Chose different collection
+            </ion-button>
+        </ion-card-content>
+        <ion-card-content *ngIf="!provider?.collectionId">
+            <p>
+                You have not yet defined which collection to use for processing. Please select one in the list of collections.
+                <ion-button expand="block" routerLink="/tabs/open-eo/provider-info/collections" routerDirection="forward">
+                    Chose collection
+                </ion-button>
+            </p>
+        </ion-card-content>
+    </ion-card>
+
     <h2>Custom data</h2>
     <ion-button expand="block" routerLink="/tabs/open-eo/provider-info/jobs" routerDirection="forward">
         Stored jobs

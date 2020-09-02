@@ -16,6 +16,7 @@
 
 import { BoundingBox } from '../../app/core/open-eo/bounding-box';
 import { formatDate } from '@angular/common';
+import { Bands } from '../../app/core/data-provider/bands';
 
 export function agriculture(
     collection: string,
@@ -23,7 +24,7 @@ export function agriculture(
     endDate: Date,
     boundingBox: BoundingBox,
     geoJson: any,
-    resolution: number
+    bands: Bands
 ): any {
     return {
         process_graph: {
@@ -36,7 +37,7 @@ export function agriculture(
                         formatDate(startDate, 'yyyy-MM-dd', 'en'),
                         formatDate(endDate, 'yyyy-MM-dd', 'en')
                     ],
-                    bands: ['B11', 'B8', 'B2']
+                    bands: [bands.swir1, bands.nir, bands.blue]
                 }
             },
             reduce: {

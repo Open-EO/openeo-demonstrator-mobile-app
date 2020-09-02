@@ -1,0 +1,71 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title *ngIf="!provider">Setup bands</ion-title>
+    <ion-title *ngIf="provider">Setup bands for {{ provider.name }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <p>
+    Select which bands correspond to which in the selected collection for this data provider.
+  </p>
+  <ng-container *ngIf="bands?.values && provider">
+    <ion-item>
+      <ion-label>Red</ion-label>
+      <ion-select placeholder="Red" [(ngModel)]="provider.bands.red">
+        <ion-select-option *ngFor="let band of bands.values" [value]="band">{{band}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>Green</ion-label>
+      <ion-select placeholder="Green" [(ngModel)]="provider.bands.green">
+        <ion-select-option *ngFor="let band of bands.values" [value]="band">{{band}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>Blue</ion-label>
+      <ion-select placeholder="Blue" [(ngModel)]="provider.bands.blue">
+        <ion-select-option *ngFor="let band of bands.values" [value]="band">{{band}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>NIR</ion-label>
+      <ion-select placeholder="NIR" [(ngModel)]="provider.bands.nir">
+        <ion-select-option *ngFor="let band of bands.values" [value]="band">{{band}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>SWIR-1</ion-label>
+      <ion-select placeholder="SWIR-1" [(ngModel)]="provider.bands.swir1">
+        <ion-select-option *ngFor="let band of bands.values" [value]="band">{{band}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>SWIR-2</ion-label>
+      <ion-select placeholder="SWIR-2" [(ngModel)]="provider.bands.swir2">
+        <ion-select-option *ngFor="let band of bands.values" [value]="band">{{band}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>True Color Image (Red)</ion-label>
+      <ion-select placeholder="True Color Image (Red)" [(ngModel)]="provider.bands.tcir">
+        <ion-select-option *ngFor="let band of bands.values" [value]="band">{{band}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>True Color Image (Green)</ion-label>
+      <ion-select placeholder="True Color Image (Green)" [(ngModel)]="provider.bands.tcig">
+        <ion-select-option *ngFor="let band of bands.values" [value]="band">{{band}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>True Color Image (Blue)</ion-label>
+      <ion-select placeholder="True Color Image (Blue)" [(ngModel)]="provider.bands.tcib">
+        <ion-select-option *ngFor="let band of bands.values" [value]="band">{{band}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ng-container>
+</ion-content>

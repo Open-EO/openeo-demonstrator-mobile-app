@@ -233,7 +233,7 @@ export class OpenEOService {
                 endDate,
                 location.boundingBox,
                 location.geoJson,
-                resolution
+                dataProviders[i].bands
             );
 
             const errors = await this.validateProcessGraph(

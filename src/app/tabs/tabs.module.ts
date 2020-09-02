@@ -84,6 +84,14 @@ const routes: Routes = [
                                     '../open-eo/capabilities/capabilities.module#CapabilitiesPageModule'
                             },
                             {
+                                path: 'bands-setup',
+                                loadChildren:
+                                    '../open-eo/bands-setup/bands-setup.module#BandsSetupPageModule',
+                                canActivate: [
+                                    DataProviderSelectedAndConnectedGuard
+                                ]
+                            },
+                            {
                                 path: 'collections',
                                 canActivate: [
                                     DataProviderSelectedAndConnectedGuard

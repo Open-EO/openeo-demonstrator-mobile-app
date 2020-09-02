@@ -34,4 +34,15 @@ export class DataProvider {
     public isPublic = false;
     public isActive = false;
     public isAvailable = false;
+    public bands = {
+        blue: 'B2',
+        green: 'B3',
+        red: 'B4',
+        nir: 'B8',
+        swir1: 'B11',
+        swir2: 'B12',
+        tcir: 'TCI_R',
+        tcig: 'TCI_G',
+        tcib: 'TCI_B'
+    };
 }
