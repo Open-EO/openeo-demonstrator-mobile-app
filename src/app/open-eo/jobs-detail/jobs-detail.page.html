@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title *ngIf="job">{{ job.title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ng-container *ngIf="job">
+    <div class="status status-{{job.status}}">{{ job.status }}</div>
+    <div class="ion-padding">
+      <h2>Results</h2>
+      <ng-container *ngIf="jobResults; else noResults">
+        <p *ngFor="let result of jobResults" >
+          <a [href]="result.href">{{ result.href }}</a>
+        </p>
+      </ng-container>
+
+      <h2>Log output</h2>
+      <ng-container *ngIf="logs.length > 0; else noLogs">
+        <p *ngFor="let log of logs" class="log log-{{log.level}}">[{{ log.level }}] {{ log.message }}</p>
+      </ng-container>
+    </div>
+  </ng-container>
+</ion-content>
+
+<ng-template #noResults>
+  <p>No results are available (yet).</p>
+</ng-template>
+
+<ng-template #noLogs>
+  <p>No logs are available (yet).</p>
+</ng-template>

@@ -15,43 +15,49 @@
  */
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
+import { Router } from '@angular/router';
+import { Select } from '@ngxs/store';
 import { DataProviderState } from '../../core/data-provider/data-provider.state';
 import { Observable, Subscription } from 'rxjs';
 import { DataProvider } from '../../core/data-provider/data-provider';
-import { Navigate } from '@ngxs/router-plugin';
 
 @Component({
-    selector: 'app-jobs',
-    templateUrl: './jobs.page.html'
+    selector: 'app-jobs-detail',
+    templateUrl: './jobs-detail.page.html',
+    styleUrls: ['./jobs-detail.page.scss']
 })
-export class JobsPage implements OnInit, OnDestroy {
+export class JobsDetailPage implements OnInit, OnDestroy {
     @Select(DataProviderState.getSelected)
     public provider$: Observable<DataProvider>;
-    public jobs: any[] = null;
+    public job: any;
+    public jobResults: any;
+    public logs: { level: string; message: string }[] = [];
+    private endSyncFn = null;
+    private jobId: string;
     private providerSubscription: Subscription;
 
-    constructor(private store: Store) {}
+    public constructor(private router: Router) {}
 
-    public ngOnInit(): void {
+    public ngOnInit() {
+        this.jobId = this.router.getCurrentNavigation().extras.state.jobId;
+
         this.providerSubscription = this.provider$.subscribe(
             async (value: DataProvider) => {
-                const jobs = await value.connection.listJobs();
-                jobs.sort((a, b) => (a.updated < b.updated ? 1 : -1));
-                this.jobs = jobs;
+                this.job = await value.connection.getJob(this.jobId);
+                this.endSyncFn = this.job.monitorJob(async (job, logs) => {
+                    this.job = job;
+                    this.logs = logs;
+                    if (this.job.status === 'finished') {
+                        this.jobResults = await this.job.listResults();
+                    }
+                    console.log('ahsjdkhjkasd0');
+                }, 3);
             }
         );
     }
 
-    public ngOnDestroy(): void {
+    public ngOnDestroy() {
         this.providerSubscription.unsubscribe();
-    }
-
-    public select(jobId: string) {
-        this.store.dispatch(
-            new Navigate(['/tabs/open-eo/provider-info/jobs/detail'], null, {
-                state: { jobId: jobId }
-            })
-        );
+        this.endSyncFn();
     }
 }

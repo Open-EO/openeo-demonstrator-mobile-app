@@ -127,10 +127,20 @@ const routes: Routes = [
                             },
                             {
                                 path: 'jobs',
-                                loadChildren:
-                                    '../open-eo/jobs/jobs.module#JobsPageModule',
                                 canActivate: [
                                     DataProviderSelectedAndConnectedGuard
+                                ],
+                                children: [
+                                    {
+                                        path: '',
+                                        loadChildren:
+                                            '../open-eo/jobs/jobs.module#JobsPageModule'
+                                    },
+                                    {
+                                        path: 'detail',
+                                        loadChildren:
+                                            '../open-eo/jobs-detail/jobs-detail.module#JobsDetailPageModule'
+                                    }
                                 ]
                             }
                         ]

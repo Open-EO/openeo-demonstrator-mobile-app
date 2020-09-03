@@ -7,7 +7,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-no-padding">
   <ng-container *ngIf="jobs === null; else list">
     <app-loading-indicator text="Loading jobs..."></app-loading-indicator>
   </ng-container>
@@ -16,11 +16,14 @@
 <ng-template #list>
   <ion-list *ngIf="jobs.length > 0; else noentries">
     <ng-container *ngFor="let job of jobs">
-      <ion-item>
+      <ion-item (click)="select(job.id)">
         <ion-label class="ion-text-wrap">
           <h3>{{ job.title }}</h3>
           <p>{{ job.description }}</p>
-          <p>Status: {{ job.status }}</p>
+          <p>
+            Status: {{ job.status }}<br>
+            Updated: {{ job.updated | date:'mediumDate' }}
+          </p>
         </ion-label>
       </ion-item>
     </ng-container>

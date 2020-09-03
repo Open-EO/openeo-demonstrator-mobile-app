@@ -42,7 +42,7 @@
     "@ngxs/logger-plugin": "^3.6.2",
     "@ngxs/router-plugin": "^3.6.2",
     "@ngxs/store": "^3.6.2",
-    "@openeo/js-client": "^1.0.0-rc.2",
+    "@openeo/js-client": "^1.0.0-rc.3",
     "@types/crypto-js": "^3.1.47",
     "cesium": "^1.66.0",
     "cordova-ios": "^5.1.1",

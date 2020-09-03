@@ -19,19 +19,13 @@ import { Connection } from '@openeo/js-client';
 import { DataProviderState } from '../data-provider/data-provider.state';
 import { Store } from '@ngxs/store';
 import { EOIndex } from './eo-index';
-import {
-    dateOfTodayWithoutTime,
-    distanceLatitude,
-    distanceLongitude
-} from '../utils';
+import { distanceLatitude, distanceLongitude } from '../utils';
 import { OpenstreetmapLocation } from '../openstreetmap/openstreetmap-location';
 import { IndexData } from './index-data';
 import { UpdateIndexData } from '../interest/interest.actions';
 import * as d3 from 'd3';
 import { CustomMessageError } from '../error/custom-message-error';
 import { DataProvider } from '../data-provider/data-provider';
-import simplify from 'simplify-js';
-import { InterestState } from '../interest/interest.state';
 
 @Injectable({
     providedIn: 'root'

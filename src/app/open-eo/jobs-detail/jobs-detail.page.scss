@@ -1,0 +1,61 @@
+/**
+ * Copyright 2020 Solenix Schweiz GmbH
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.status {
+    padding: 8px;
+    text-align: center;
+    text-transform: uppercase;
+
+    &.status-created {
+        background: var(--ion-color-light);
+        color: var(--ion-color-medium);
+    }
+
+    &.status-queued {
+        background: var(--ion-color-secondary);
+    }
+
+    &.status-running {
+        background: var(--ion-color-primary);
+    }
+
+    &.status-cancelled {
+        background: var(--ion-color-warning);
+    }
+
+    &.status-error {
+        background: var(--ion-color-danger);
+    }
+
+    &.status-finished {
+        background: var(--ion-color-success);
+    }
+}
+
+p.log {
+    &.log-error {
+        color: var(--ion-color-danger);
+    }
+    &.log-warning {
+        color: var(--ion-color-warning);
+    }
+    &.log-debug {
+        color: var(--ion-color-medium);
+    }
+    &.log-info {
+        color: var(--ion-color-light);
+    }
+}
