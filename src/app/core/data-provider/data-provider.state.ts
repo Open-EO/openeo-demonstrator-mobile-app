@@ -31,6 +31,7 @@ import { DataProvider } from './data-provider';
 import { State, Action, StateContext, Selector, NgxsOnInit } from '@ngxs/store';
 import { DataProviderService } from './data-provider.service';
 import { Navigate } from '@ngxs/router-plugin';
+import { InvalidateCurrentIndexData } from '../interest/interest.actions';
 
 export interface DataProviderStateModel {
     dataProviders: DataProvider[];
@@ -90,6 +91,7 @@ export class DataProviderState implements NgxsOnInit {
             dataProviders: providers,
             initialized: true
         });
+        ctx.dispatch(new InvalidateCurrentIndexData());
     }
 
     @Action(SaveDataProviders)
@@ -117,6 +119,7 @@ export class DataProviderState implements NgxsOnInit {
             dataProviders: newDataProviders
         });
         ctx.dispatch(new SaveDataProviders());
+        ctx.dispatch(new InvalidateCurrentIndexData());
     }
 
     @Action(SetCollectionForSelectedDataProvider)
@@ -139,6 +142,7 @@ export class DataProviderState implements NgxsOnInit {
             selected: selected
         });
         ctx.dispatch(new SaveDataProviders());
+        ctx.dispatch(new InvalidateCurrentIndexData());
     }
 
     @Action(SelectDataProvider)

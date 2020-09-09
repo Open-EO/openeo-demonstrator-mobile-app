@@ -93,6 +93,5 @@ export class AnnotationState {
                 new SelectIndex(action.payload.eoIndexKey)
             ])
             .toPromise();
-        ctx.dispatch(new Navigate(['/tabs/home']));
     }
 }

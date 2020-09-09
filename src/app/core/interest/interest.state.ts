@@ -27,7 +27,8 @@ import {
     UpdateRetrievalDate,
     UpdateRetrievalTimespan,
     GPSStateChanged,
-    SelectIndex
+    SelectIndex,
+    InvalidateCurrentIndexData
 } from './interest.actions';
 import { Interest } from './interest';
 import {
@@ -57,6 +58,7 @@ export interface InterestStateModel {
     retrievalDate: Date;
     retrievalStartDate: Date;
     retrievalTimespan: number;
+    isLoading: boolean;
 }
 
 @State<InterestStateModel>({
@@ -70,7 +72,8 @@ export interface InterestStateModel {
         indexDataCache: new Map<string, IndexData>(),
         retrievalDate: dateOfTodayWithoutTime(),
         retrievalStartDate: dateOfTodayWithoutTime(),
-        retrievalTimespan: 10
+        retrievalTimespan: 10,
+        isLoading: false
     }
 })
 export class InterestState implements NgxsOnInit {
@@ -141,6 +144,11 @@ export class InterestState implements NgxsOnInit {
         return state.retrievalTimespan;
     }
 
+    @Selector()
+    public static isLoading(state: InterestStateModel) {
+        return state.isLoading;
+    }
+
     public async ngxsOnInit(ctx: StateContext<InterestStateModel>) {
         const state = ctx.getState();
         ctx.patchState({
@@ -171,9 +179,7 @@ export class InterestState implements NgxsOnInit {
             });
         }
 
-        const state = ctx.getState();
-        ctx.setState({
-            ...state,
+        ctx.patchState({
             interests: interests
         });
         this.updateSelectedObject(ctx);
@@ -226,12 +232,13 @@ export class InterestState implements NgxsOnInit {
         originalInterests.unshift(interest);
         await this.storage.set(InterestState.STORAGE_KEY, originalInterests);
 
+        const indexId = ctx.getState().currentIndexId;
         ctx.patchState({
             interests: originalInterests,
             selected: interest,
-            currentIndexId: 0,
-            currentIndex: interest.availableIndices[0]
+            currentIndex: interest.availableIndices[indexId]
         });
+        ctx.dispatch(new InvalidateCurrentIndexData());
     }
 
     @Action(NextIndex)
@@ -247,6 +254,7 @@ export class InterestState implements NgxsOnInit {
             currentIndexId: nextIndex,
             currentIndex: state.selected.availableIndices[nextIndex]
         });
+        ctx.dispatch(new InvalidateCurrentIndexData());
     }
 
     @Action(PreviousIndex)
@@ -262,6 +270,7 @@ export class InterestState implements NgxsOnInit {
             currentIndexId: nextIndex,
             currentIndex: state.selected.availableIndices[nextIndex]
         });
+        ctx.dispatch(new InvalidateCurrentIndexData());
     }
 
     @Action(SelectIndex)
@@ -277,6 +286,7 @@ export class InterestState implements NgxsOnInit {
             currentIndexId: eoIndexId,
             currentIndex: availableIndices[eoIndexId]
         });
+        ctx.dispatch(new InvalidateCurrentIndexData());
     }
 
     @Action(LoadCurrentIndexData)
@@ -286,6 +296,11 @@ export class InterestState implements NgxsOnInit {
         if (!state.currentIndex || !state.selected) {
             return null;
         }
+
+        ctx.patchState({
+            currentIndexData: null,
+            isLoading: true
+        });
 
         await this.openEOService.loadIndexData(
             state.currentIndex,
@@ -323,6 +338,7 @@ export class InterestState implements NgxsOnInit {
             state.selected.osmLocation.osmId === action.data.location.osmId
         ) {
             ctx.patchState({
+                isLoading: false,
                 currentIndexData: action.data
             });
         }
@@ -340,6 +356,7 @@ export class InterestState implements NgxsOnInit {
                 ctx.getState().retrievalTimespan
             )
         });
+        ctx.dispatch(new InvalidateCurrentIndexData());
     }
 
     @Action(UpdateRetrievalTimespan)
@@ -354,6 +371,7 @@ export class InterestState implements NgxsOnInit {
                 action.retrievalTimespan
             )
         });
+        ctx.dispatch(new InvalidateCurrentIndexData());
     }
 
     private calculateStartDate(endDate: Date, timespan: number): Date {

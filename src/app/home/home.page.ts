@@ -16,6 +16,7 @@
 
 import {
     FavoriseInterest,
+    InvalidateCurrentIndexData,
     LoadCurrentIndexData,
     NextIndex,
     PreviousIndex
@@ -24,8 +25,8 @@ import { InterestState } from '../core/interest/interest.state';
 import { InterestService } from '../core/interest/interest.service';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Interest } from '../core/interest/interest';
-import { Select, Store } from '@ngxs/store';
-import { Observable, Subscription } from 'rxjs';
+import { Actions, ofActionDispatched, Select, Store } from '@ngxs/store';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { EOIndex } from '../core/open-eo/eo-index';
 import { DataProviderState } from '../core/data-provider/data-provider.state';
 import { DataProvider } from '../core/data-provider/data-provider';
@@ -40,6 +41,7 @@ import {
     HomeActionsPopoverComponent,
     HomeActionsPopoverValues
 } from '../shared/home-actions-popover/home-actions-popover.component';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 
 @Component({
     selector: 'app-home',
@@ -51,7 +53,8 @@ export class HomePage implements OnInit, OnDestroy {
     public retrievalDate$: Observable<Date>;
     @Select(InterestState.getRetrievalStartDate)
     public retrievalStartDate: Observable<Date>;
-    public isLoading = false;
+    @Select(InterestState.isLoading)
+    public isLoading$: Observable<boolean>;
     @ViewChild('mapComponent', { static: false })
     public mapComponent: MapComponent;
 
@@ -60,55 +63,68 @@ export class HomePage implements OnInit, OnDestroy {
     public dataObjectURL: any = null;
     private isDataProvidersInitialized: boolean;
     private isActivePage = false;
-    private subscriptions: Subscription[] = [];
     private activeProviders: DataProvider[] = [];
+    private destroy$ = new Subject<void>();
 
     constructor(
         private interestService: InterestService,
         private store: Store,
         private alertController: AlertController,
         private popoverController: PopoverController,
-        private socialSharing: SocialSharing
-    ) {}
+        private socialSharing: SocialSharing,
+        private actions$: Actions
+    ) {
+        this.actions$
+            .pipe(
+                ofActionDispatched(InvalidateCurrentIndexData),
+                debounceTime(100),
+                takeUntil(this.destroy$)
+            )
+            .subscribe(() => {
+                this.store.dispatch(new LoadCurrentIndexData());
+            });
+    }
 
     public ngOnInit(): void {
-        this.subscriptions = [
-            this.store.select(InterestState.getSelected).subscribe(selected => {
+        this.store
+            .select(InterestState.getSelected)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(selected => {
                 if (selected === null) {
                     return;
                 }
 
                 this.selectedInterest = selected;
-            }),
-            this.store
-                .select(InterestState.getCurrentIndex)
-                .subscribe((index: EOIndex) => {
-                    this.currentIndex = index;
-                    this.refreshIndexData();
-                }),
-            this.store
-                .select(InterestState.getCurrentIndexData)
-                .subscribe(async (data: IndexData) => {
-                    this.updateCanvas(data);
-                }),
-            this.store
-                .select(DataProviderState.getActive)
-                .subscribe((providers: DataProvider[]) => {
-                    this.activeProviders = providers;
-                    this.showPromptIfNoActiveProviders();
-                    this.refreshIndexData();
-                }),
-            this.store
-                .select(DataProviderState.isInitialized)
-                .subscribe(async (initialized: boolean) => {
-                    this.isDataProvidersInitialized = initialized;
-                    this.refreshIndexData();
-                })
-        ];
+            });
+        this.store
+            .select(InterestState.getCurrentIndex)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((index: EOIndex) => {
+                this.currentIndex = index;
+            });
+        this.store
+            .select(InterestState.getCurrentIndexData)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(async (data: IndexData) => {
+                this.updateCanvas(data);
+            });
+        this.store
+            .select(DataProviderState.getActive)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((providers: DataProvider[]) => {
+                this.activeProviders = providers;
+                this.showPromptIfNoActiveProviders();
+            });
+        this.store
+            .select(DataProviderState.isInitialized)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(async (initialized: boolean) => {
+                this.isDataProvidersInitialized = initialized;
+            });
     }
 
     public ngOnDestroy(): void {
-        this.subscriptions.forEach(subscription => subscription.unsubscribe());
+        this.destroy$.next();
     }
 
     /**
@@ -117,6 +133,7 @@ export class HomePage implements OnInit, OnDestroy {
     public async ionViewWillEnter() {
         this.isActivePage = true;
         this.showPromptIfNoActiveProviders();
+        this.store.dispatch(new InvalidateCurrentIndexData());
     }
 
     /**
@@ -128,14 +145,12 @@ export class HomePage implements OnInit, OnDestroy {
 
     public async onSwipeLeft(event) {
         if (this.selectedInterest) {
-            this.isLoading = true;
             this.store.dispatch(new NextIndex());
         }
     }
 
     public async onSwipeRight(event) {
         if (this.selectedInterest) {
-            this.isLoading = true;
             this.store.dispatch(new PreviousIndex());
         }
     }
@@ -217,18 +232,11 @@ export class HomePage implements OnInit, OnDestroy {
         return this.mapComponent.cesiumViewer.canvas.toDataURL();
     }
 
-    private async refreshIndexData() {
-        if (this.isDataProvidersInitialized) {
-            this.isLoading = true;
-            this.dataObjectURL = null;
-            this.store.dispatch(new LoadCurrentIndexData());
-        }
-    }
-
     private updateCanvas(data: IndexData) {
         if (data && data.canvas) {
             this.dataObjectURL = data.canvas;
-            this.isLoading = false;
+        } else {
+            this.dataObjectURL = null;
         }
     }
 

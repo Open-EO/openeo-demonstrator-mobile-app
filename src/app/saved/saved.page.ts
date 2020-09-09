@@ -20,6 +20,7 @@ import { Annotation } from '../core/annotation/annotation';
 import { Select, Store } from '@ngxs/store';
 import { AnnotationState } from '../core/annotation/annotation.state';
 import { SelectAnnotation } from '../core/annotation/annotation.actions';
+import { Navigate } from '@ngxs/router-plugin';
 
 @Component({
     selector: 'app-saved',
@@ -32,7 +33,8 @@ export class SavedPage {
 
     public constructor(private store: Store) {}
 
-    public select(annotation: Annotation) {
-        this.store.dispatch(new SelectAnnotation(annotation));
+    public async select(annotation: Annotation) {
+        await this.store.dispatch(new SelectAnnotation(annotation)).toPromise();
+        await this.store.dispatch(new Navigate(['/tabs/home'])).toPromise();
     }
 }

@@ -46,6 +46,10 @@ export class SelectIndex {
     constructor(public indexKey: string) {}
 }
 
+export class InvalidateCurrentIndexData {
+    static readonly type = '[Interests] Invalidate Current Index Data';
+}
+
 export class LoadCurrentIndexData {
     static readonly type = '[Interests] Load Current EO Index Data';
 }
