@@ -65,6 +65,8 @@ export class ServersPopoverComponent implements OnDestroy {
     }
 
     public async manage() {
-        this.store.dispatch(new Navigate(['/tabs/open-eo']));
+        this.store.dispatch(
+            new Navigate(['/tabs/open-eo'], null, { fragment: 'providers' })
+        );
     }
 }

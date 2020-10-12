@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { DataProviderState } from '../../core/data-provider/data-provider.state';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { DataProvider } from '../../core/data-provider/data-provider';
 import {
     SelectDataProvider,
     ToggleDataProvider
 } from '../../core/data-provider/data-provider.actions';
-import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AlertController, IonContent } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 
 @Component({
@@ -32,17 +32,53 @@ import { Storage } from '@ionic/storage';
     templateUrl: './open-eo.page.html',
     styleUrls: ['./open-eo.page.scss']
 })
-export class OpenEOPage {
+export class OpenEOPage implements OnDestroy {
+    private static readonly SCROLL_TOP_OFFSET = 80;
+    private static readonly SCROLL_DURATION = 1000;
+
     @Select(DataProviderState.getAll)
     public servers$: Observable<DataProvider[]>;
+    @ViewChild(IonContent, { static: false })
+    public ionContent: IonContent;
+    private fragmentSubscription: Subscription;
 
     constructor(
         private store: Store,
         private router: Router,
+        private activatedRoute: ActivatedRoute,
         private actions$: Actions,
         private alertController: AlertController,
         private storage: Storage
     ) {}
+
+    public ngOnDestroy() {
+        if (this.fragmentSubscription) {
+            this.fragmentSubscription.unsubscribe();
+        }
+    }
+
+    /**
+     * Called automatically by Ionic
+     */
+    public async ionViewDidEnter() {
+        if (this.fragmentSubscription) {
+            this.fragmentSubscription.unsubscribe();
+        }
+
+        this.fragmentSubscription = this.activatedRoute.fragment.subscribe(
+            fragment => {
+                if (fragment) {
+                    const anchor = document.getElementById(fragment);
+                    this.ionContent.scrollByPoint(
+                        0,
+                        anchor.getBoundingClientRect().top -
+                            OpenEOPage.SCROLL_TOP_OFFSET,
+                        OpenEOPage.SCROLL_DURATION
+                    );
+                }
+            }
+        );
+    }
 
     public async toggleProvider(provider: DataProvider) {
         this.store.dispatch(new ToggleDataProvider(provider.url));

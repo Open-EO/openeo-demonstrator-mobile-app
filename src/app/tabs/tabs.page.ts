@@ -15,6 +15,8 @@
  */
 
 import { Component } from '@angular/core';
+import { Store } from '@ngxs/store';
+import { Navigate } from '@ngxs/router-plugin';
 
 @Component({
     selector: 'app-tabs',
@@ -22,5 +24,10 @@ import { Component } from '@angular/core';
     styleUrls: ['./tabs.page.scss']
 })
 export class TabsPage {
-    constructor() {}
+    constructor(private store: Store) {}
+
+    public openTab(event, tab) {
+        this.store.dispatch(new Navigate(['/tabs/' + tab]));
+        event.stopImmediatePropagation();
+    }
 }

@@ -20,8 +20,8 @@
       <ion-label>Recent</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button tab="open-eo">
-      <img src="/assets/openeo_logo.png" class="openeo-tab-logo" />
+    <ion-tab-button tab="open-eo" (click)="openTab($event, 'open-eo')">
+      <img src="/assets/openeo_logo.png" class="openeo-tab-logo" alt="openEO logo" />
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>
