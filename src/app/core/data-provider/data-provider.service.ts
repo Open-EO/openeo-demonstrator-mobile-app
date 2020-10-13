@@ -159,9 +159,7 @@ export class DataProviderService {
     }
 
     public async connectProvider(provider: DataProvider): Promise<Connection> {
-        let connection;
-
-        connection = await OpenEO.connect(provider.url);
+        const connection = await OpenEO.connect(provider.url);
         const authProviders = await connection.listAuthProviders();
 
         switch (provider.authType) {

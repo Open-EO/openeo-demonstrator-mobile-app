@@ -24,7 +24,6 @@ import {
     RemoveDataProvider,
     SignOutDataProvider
 } from '../../core/data-provider/data-provider.actions';
-import { DataProviderService } from '../../core/data-provider/data-provider.service';
 
 @Component({
     selector: 'app-provider-info',
@@ -38,7 +37,7 @@ export class ProviderInfoPage implements OnInit, OnDestroy {
     public description: string;
     private providerSubscription: Subscription;
 
-    constructor(private store: Store, private service: DataProviderService) {}
+    constructor(private store: Store) {}
 
     ngOnInit(): void {
         this.providerSubscription = this.provider$.subscribe(

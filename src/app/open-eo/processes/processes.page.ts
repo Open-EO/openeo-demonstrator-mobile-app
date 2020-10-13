@@ -19,6 +19,7 @@ import { Select } from '@ngxs/store';
 import { DataProviderState } from '../../core/data-provider/data-provider.state';
 import { Observable, Subscription } from 'rxjs';
 import { DataProvider } from '../../core/data-provider/data-provider';
+import { DataProviderService } from '../../core/data-provider/data-provider.service';
 
 @Component({
     selector: 'app-processes',
@@ -30,11 +31,16 @@ export class ProcessesPage implements OnInit, OnDestroy {
     public processes: any = null;
     private providerSubscription: Subscription;
 
+    constructor(private service: DataProviderService) {}
+
     public async ngOnInit() {
-        this.providerSubscription = this.provider$.subscribe(
-            async value =>
-                (this.processes = await value.connection.listProcesses())
-        );
+        this.providerSubscription = this.provider$.subscribe(async provider => {
+            // We can't use the provided connection here as `listProcesses` changes
+            // the connection object which is not allowed as it is marked immutable
+            // in the store.
+            const connection = await this.service.connectProvider(provider);
+            this.processes = await connection.listProcesses();
+        });
     }
 
     public async ngOnDestroy() {
