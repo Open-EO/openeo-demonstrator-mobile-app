@@ -45,7 +45,6 @@
     "@openeo/js-client": "^1.0.0-rc.3",
     "@types/crypto-js": "^3.1.47",
     "cesium": "^1.66.0",
-    "cordova-ios": "^5.1.1",
     "cordova-res": "^0.15.1",
     "core-js": "^2.5.4",
     "crypto-js": "^4.0.0",
@@ -80,6 +79,7 @@
     "codelyzer": "^5.0.0",
     "cordova": "^10.0.0",
     "cordova-android": "^9.0.0",
+    "cordova-ios": "^6.1.1",
     "cordova-plugin-androidx": "^2.0.0",
     "cordova-plugin-androidx-adapter": "^1.1.1",
     "cordova-plugin-device": "^2.0.2",
@@ -133,8 +133,8 @@
       "cordova-plugin-androidx-adapter": {}
     },
     "platforms": [
-      "ios",
-      "android"
+      "android",
+      "ios"
     ]
   },
   "browser": {
