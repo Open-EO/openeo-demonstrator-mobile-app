@@ -20,7 +20,8 @@
     <ion-select placeholder="Authentication method" interface="popover" [(ngModel)]="authMethod">
         <ion-select-option [value]="authTypeEnum.Anonymous">Anonymous</ion-select-option>
         <ion-select-option [value]="authTypeEnum.Basic">HTTP Basic Authentication</ion-select-option>
-        <ion-select-option [value]="authTypeEnum.OIDC">Open ID Connect (OIDC)</ion-select-option>
+        <!-- Disabled until fully implemented -->
+        <!-- <ion-select-option [value]="authTypeEnum.OIDC">Open ID Connect (OIDC)</ion-select-option> -->
     </ion-select>
     <div *ngIf="authMethod === 'basic'">
         <ion-input placeholder="Username" [(ngModel)]="authData.username"
