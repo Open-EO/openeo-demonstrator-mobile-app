@@ -1,0 +1,39 @@
+<ion-header *ngIf="contentOnly === false">
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button></ion-back-button>
+        </ion-buttons>
+        <ion-title>Provider authentication</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" *ngIf="contentOnly === false else form">
+    <ng-container *ngTemplateOutlet="form"></ng-container>
+</ion-content>
+
+<ng-template #form>
+    <h2>{{ dataProvider?.name }}</h2>
+    <ion-text color="danger" *ngIf="hasError">
+        <p>Authentication failed. Please check your credentials and make sure you have a working internet
+            connection.</p>
+    </ion-text>
+    <ion-select placeholder="Authentication method" interface="popover" [(ngModel)]="authMethod">
+        <ion-select-option [value]="authTypeEnum.Anonymous">Anonymous</ion-select-option>
+        <ion-select-option [value]="authTypeEnum.Basic">HTTP Basic Authentication</ion-select-option>
+        <ion-select-option [value]="authTypeEnum.OIDC">Open ID Connect (OIDC)</ion-select-option>
+    </ion-select>
+    <div *ngIf="authMethod === 'basic'">
+        <ion-input placeholder="Username" [(ngModel)]="authData.username"
+                   [required]="authMethod === authTypeEnum.Basic"></ion-input>
+        <ion-input placeholder="Password" [(ngModel)]="authData.password" type="password"
+                   [required]="authMethod === authTypeEnum.Basic"></ion-input>
+    </div>
+    <div *ngIf="authMethod === 'oidc'">
+        <ion-input placeholder="OIDC Token" [value]="authData.token"
+                   [required]="authMethod === authTypeEnum.OIDC"></ion-input>
+    </div>
+    <p>
+        <ion-button expand="block" (click)="signIn()">Sign in</ion-button>
+        <ion-button expand="block" (click)="return(false);" color="secondary">Cancel</ion-button>
+    </p>
+</ng-template>

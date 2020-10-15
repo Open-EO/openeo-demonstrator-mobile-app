@@ -32,6 +32,7 @@ import { State, Action, StateContext, Selector, NgxsOnInit } from '@ngxs/store';
 import { DataProviderService } from './data-provider.service';
 import { Navigate } from '@ngxs/router-plugin';
 import { InvalidateCurrentIndexData } from '../interest/interest.actions';
+import { AuthenticationError } from '../error/authentication-error';
 
 export interface DataProviderStateModel {
     dataProviders: DataProvider[];
@@ -47,7 +48,7 @@ export interface DataProviderStateModel {
         initialized: false
     }
 })
-export class DataProviderState implements NgxsOnInit {
+export class DataProviderState {
     constructor(private service: DataProviderService) {}
 
     @Selector()
@@ -70,6 +71,14 @@ export class DataProviderState implements NgxsOnInit {
     }
 
     @Selector()
+    public static getNeedAuthenticating(state: DataProviderStateModel) {
+        return state.dataProviders.filter(
+            (item: DataProvider) =>
+                item.isActive && !item.connection && !item.authData
+        );
+    }
+
+    @Selector()
     public static getSelected(state: DataProviderStateModel) {
         return state.selected;
     }
@@ -77,10 +86,6 @@ export class DataProviderState implements NgxsOnInit {
     @Selector()
     public static isInitialized(state: DataProviderStateModel) {
         return state.initialized;
-    }
-
-    public async ngxsOnInit(ctx: StateContext<DataProviderStateModel>) {
-        ctx.dispatch(new LoadDataProviders());
     }
 
     @Action(LoadDataProviders)
@@ -171,25 +176,29 @@ export class DataProviderState implements NgxsOnInit {
         action: AuthenticateDataProvider
     ) {
         // TODO: Check if OIDC works properly
-        const provider = await this.service.authenticate(action.provider);
-        if (provider.connection !== null) {
-            const dataProviders = Array.from(ctx.getState().dataProviders);
-            for (let i = 0; i < dataProviders.length; i++) {
-                if (dataProviders[i].url === provider.url) {
-                    dataProviders[i] = provider;
+        try {
+            const provider = await this.service.authenticate(action.provider);
+            if (provider.connection !== null) {
+                const dataProviders = Array.from(ctx.getState().dataProviders);
+                for (let i = 0; i < dataProviders.length; i++) {
+                    if (dataProviders[i].url === provider.url) {
+                        dataProviders[i] = provider;
+                    }
                 }
-            }
 
-            let selected = ctx.getState().selected;
-            if (selected && selected.url === provider.url) {
-                selected = provider;
-            }
+                let selected = ctx.getState().selected;
+                if (selected && selected.url === provider.url) {
+                    selected = provider;
+                }
 
-            ctx.patchState({
-                dataProviders: dataProviders,
-                selected: selected
-            });
-            ctx.dispatch(new SaveDataProviders());
+                ctx.patchState({
+                    dataProviders: dataProviders,
+                    selected: selected
+                });
+                ctx.dispatch(new SaveDataProviders());
+            }
+        } catch (e) {
+            throw new AuthenticationError();
         }
     }
 

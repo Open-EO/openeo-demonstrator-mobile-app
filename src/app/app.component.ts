@@ -18,13 +18,6 @@ import { Component } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { Store } from '@ngxs/store';
-import {
-    GPSStateChanged,
-    LoadInterests
-} from './core/interest/interest.actions';
-import { LoadAnnotations } from './core/annotation/annotation.actions';
-import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 
 @Component({
     selector: 'app-root',
@@ -34,9 +27,7 @@ export class AppComponent {
     constructor(
         private platform: Platform,
         private splashScreen: SplashScreen,
-        private statusBar: StatusBar,
-        private store: Store,
-        private diagnostic: Diagnostic
+        private statusBar: StatusBar
     ) {
         this.initializeApp();
     }
@@ -44,20 +35,7 @@ export class AppComponent {
     public async initializeApp() {
         this.platform.ready().then(async () => {
             this.statusBar.styleLightContent();
-
-            await this.store
-                .dispatch([new LoadInterests(), new LoadAnnotations()])
-                .toPromise();
-
-            this.isFullyInitialized();
+            this.splashScreen.hide();
         });
-    }
-
-    private isFullyInitialized() {
-        this.splashScreen.hide();
-        this.diagnostic.registerLocationStateChangeHandler(() =>
-            this.store.dispatch(new GPSStateChanged())
-        );
-        this.store.dispatch(new GPSStateChanged());
     }
 }

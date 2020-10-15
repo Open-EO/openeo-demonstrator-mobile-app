@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
+import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { Platform } from '@ionic/angular';
 import {
     RemoveAnnotation,
@@ -24,29 +24,34 @@ import {
 } from './annotation.actions';
 import { Annotation } from './annotation';
 import { AnnotationService } from './annotation.service';
-import { InterestStateModel } from '../interest/interest.state';
 import {
     SelectIndex,
     SelectInterest,
     UpdateRetrievalDate,
     UpdateRetrievalTimespan
 } from '../interest/interest.actions';
-import { Navigate } from '@ngxs/router-plugin';
 
 export interface AnnotationStateModel {
     annotations: Map<string, Annotation>;
+    isInitialized: boolean;
 }
 
 @State<AnnotationStateModel>({
     name: 'annotation',
     defaults: {
-        annotations: new Map<string, Annotation>()
+        annotations: new Map<string, Annotation>(),
+        isInitialized: false
     }
 })
 export class AnnotationState {
     @Selector()
     public static getAll(state: AnnotationStateModel): Annotation[] {
         return Array.from(state.annotations.values());
+    }
+
+    @Selector()
+    public static isInitialized(state: AnnotationStateModel): boolean {
+        return state.isInitialized;
     }
 
     public constructor(
@@ -58,7 +63,8 @@ export class AnnotationState {
     public async load(ctx: StateContext<AnnotationStateModel>) {
         const annotations = await this.service.load();
         ctx.patchState({
-            annotations: annotations
+            annotations: annotations,
+            isInitialized: true
         });
     }
 

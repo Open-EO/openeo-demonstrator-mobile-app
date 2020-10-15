@@ -19,6 +19,7 @@ import { ToastController } from '@ionic/angular';
 import { HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { CustomMessageError } from './custom-message-error';
+import { AuthenticationError } from './authentication-error';
 
 @Injectable()
 export class CustomErrorHandler implements ErrorHandler {
@@ -29,6 +30,14 @@ export class CustomErrorHandler implements ErrorHandler {
         const error = wrappedError.rejection
             ? wrappedError.rejection
             : wrappedError;
+
+        if (error instanceof AuthenticationError) {
+            if (false === environment.production) {
+                throw error;
+            }
+
+            return;
+        }
 
         let message =
             'Unfortunately an unknown error has occurred. Please restart the app and try again.';

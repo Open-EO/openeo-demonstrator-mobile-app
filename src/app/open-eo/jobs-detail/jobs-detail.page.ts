@@ -50,7 +50,6 @@ export class JobsDetailPage implements OnInit, OnDestroy {
                     if (this.job.status === 'finished') {
                         this.jobResults = await this.job.listResults();
                     }
-                    console.log('ahsjdkhjkasd0');
                 }, 3);
             }
         );

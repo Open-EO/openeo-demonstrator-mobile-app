@@ -47,6 +47,7 @@ import { IndexData } from '../open-eo/index-data';
 import { dateOfTodayWithoutTime, rotatingClamp } from '../utils';
 import { Platform } from '@ionic/angular';
 import { EnvironmentService } from '../environment/environment.service';
+import { AnnotationStateModel } from '../annotation/annotation.state';
 
 export interface InterestStateModel {
     interests: Interest[];
@@ -59,6 +60,7 @@ export interface InterestStateModel {
     retrievalStartDate: Date;
     retrievalTimespan: number;
     isLoading: boolean;
+    isInitialized: boolean;
 }
 
 @State<InterestStateModel>({
@@ -73,7 +75,8 @@ export interface InterestStateModel {
         retrievalDate: dateOfTodayWithoutTime(),
         retrievalStartDate: dateOfTodayWithoutTime(),
         retrievalTimespan: 10,
-        isLoading: false
+        isLoading: false,
+        isInitialized: false
     }
 })
 export class InterestState implements NgxsOnInit {
@@ -87,6 +90,11 @@ export class InterestState implements NgxsOnInit {
         private platform: Platform,
         private environment: EnvironmentService
     ) {}
+
+    @Selector()
+    public static isInitialized(state: AnnotationStateModel): boolean {
+        return state.isInitialized;
+    }
 
     @Selector()
     public static getAll(state: InterestStateModel) {
@@ -180,7 +188,8 @@ export class InterestState implements NgxsOnInit {
         }
 
         ctx.patchState({
-            interests: interests
+            interests: interests,
+            isInitialized: true
         });
         this.updateSelectedObject(ctx);
     }

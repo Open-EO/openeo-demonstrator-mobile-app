@@ -105,7 +105,7 @@ export class DataProviderService {
         );
 
         for (let i = 0; i < providers.length; i++) {
-            if (providers[i].isActive) {
+            if (providers[i].isActive && providers[i].authData) {
                 providers[i].connection = await this.connectProvider(
                     providers[i]
                 );
@@ -120,6 +120,9 @@ export class DataProviderService {
         for (const dataProvider of dataProviders) {
             const cleanProvider = { ...dataProvider };
             cleanProvider.connection = null;
+            if (!cleanProvider.isDefault) {
+                cleanProvider.authData = null;
+            }
             cleanedDataProviders.push(cleanProvider);
         }
 

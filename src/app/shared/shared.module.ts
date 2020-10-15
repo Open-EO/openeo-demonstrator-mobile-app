@@ -29,6 +29,8 @@ import { ColorScaleLegendComponent } from './color-scale-legend/color-scale-lege
 import { InterestPopoverComponent } from './interest-popover/interest-popover.component';
 import { HomeActionsPopoverComponent } from './home-actions-popover/home-actions-popover.component';
 import { AnnotationListItemComponent } from './annotation-list-item/annotation-list-item.component';
+import { AuthenticateComponent } from './authenticate/authenticate.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
     declarations: [
@@ -42,13 +44,15 @@ import { AnnotationListItemComponent } from './annotation-list-item/annotation-l
         ServersPopoverComponent,
         InterestPopoverComponent,
         HomeActionsPopoverComponent,
-        ColorScaleLegendComponent
+        ColorScaleLegendComponent,
+        AuthenticateComponent
     ],
-    imports: [CommonModule, RouterModule, IonicModule],
+    imports: [CommonModule, RouterModule, FormsModule, IonicModule],
     entryComponents: [
         ServersPopoverComponent,
         InterestPopoverComponent,
-        HomeActionsPopoverComponent
+        HomeActionsPopoverComponent,
+        AuthenticateComponent
     ],
     exports: [
         CommonModule,
@@ -62,7 +66,8 @@ import { AnnotationListItemComponent } from './annotation-list-item/annotation-l
         ServersPopoverComponent,
         InterestPopoverComponent,
         HomeActionsPopoverComponent,
-        ColorScaleLegendComponent
+        ColorScaleLegendComponent,
+        AuthenticateComponent
     ]
 })
 export class SharedModule {}

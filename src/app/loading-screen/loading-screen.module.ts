@@ -17,26 +17,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
-import { AuthenticatePage } from './authenticate.page';
-import { SharedModule } from '../../shared/shared.module';
-
-const routes: Routes = [
-    {
-        path: '',
-        component: AuthenticatePage
-    }
-];
+import { LoadingScreenPageRoutingModule } from './loading-screen-routing.module';
+import { LoadingScreenPage } from './loading-screen.page';
 
 @NgModule({
     imports: [
         CommonModule,
         FormsModule,
         IonicModule,
-        RouterModule.forChild(routes),
-        SharedModule
+        LoadingScreenPageRoutingModule
     ],
-    declarations: [AuthenticatePage]
+    declarations: [LoadingScreenPage]
 })
-export class AuthenticatePageModule {}
+export class LoadingScreenPageModule {}

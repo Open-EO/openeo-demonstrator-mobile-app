@@ -45,11 +45,12 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { AnnotationState } from './core/annotation/annotation.state';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
     declarations: [AppComponent],
-    entryComponents: [],
     imports: [
+        SharedModule,
         BrowserModule,
         IonicModule.forRoot(),
         IonicStorageModule.forRoot(),

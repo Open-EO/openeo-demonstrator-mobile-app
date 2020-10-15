@@ -8,22 +8,5 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-    <h2>{{ provider?.name }}</h2>
-    <ion-text color="danger" *ngIf="hasError">
-        <p>Authentication failed. Please check your credentials and make sure you have a working internet
-            connection.</p>
-    </ion-text>
-    <ion-select placeholder="Authentication method" interface="popover" [(ngModel)]="authMethod">
-        <ion-select-option [value]="authTypeEnum.Anonymous">Anonymous</ion-select-option>
-        <ion-select-option [value]="authTypeEnum.Basic">HTTP Basic Authentication</ion-select-option>
-        <ion-select-option [value]="authTypeEnum.OIDC">Open ID Connect (OIDC)</ion-select-option>
-    </ion-select>
-    <div *ngIf="authMethod === 'basic'">
-        <ion-input placeholder="Username" [(ngModel)]="authData.username" [required]="authMethod === authTypeEnum.Basic"></ion-input>
-        <ion-input placeholder="Password" [(ngModel)]="authData.password" type="password" [required]="authMethod === authTypeEnum.Basic"></ion-input>
-    </div>
-    <div *ngIf="authMethod === 'oidc'">
-        <ion-input placeholder="OIDC Token" [value]="authData.token" [required]="authMethod === authTypeEnum.OIDC"></ion-input>
-    </div>
-    <ion-button size="block" (click)="signIn()">Sign in</ion-button>
+    <app-authenticate [dataProvider]="provider" [contentOnly]="true" [resultSubject]="authResultSubject"></app-authenticate>
 </ion-content>

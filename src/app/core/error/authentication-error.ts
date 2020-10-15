@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-export class CustomMessageError extends Error {
-    constructor(message: string) {
-        super(message);
-        Object.setPrototypeOf(this, CustomMessageError.prototype);
+export class AuthenticationError extends Error {
+    constructor() {
+        super('openEO internal authentication error');
+        Object.setPrototypeOf(this, AuthenticationError.prototype);
     }
 }

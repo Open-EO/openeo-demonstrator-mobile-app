@@ -16,10 +16,20 @@
 
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { IsInitializedGuard } from './core/is-initialized.guard';
 
 const routes: Routes = [
-    { path: '', redirectTo: 'tabs', pathMatch: 'full' },
-    { path: 'tabs', loadChildren: './tabs/tabs.module#TabsPageModule' }
+    { path: '', redirectTo: 'loading', pathMatch: 'full' },
+    {
+        path: 'tabs',
+        canActivate: [IsInitializedGuard],
+        loadChildren: './tabs/tabs.module#TabsPageModule'
+    },
+    {
+        path: 'loading',
+        loadChildren:
+            './loading-screen/loading-screen.module#LoadingScreenPageModule'
+    }
 ];
 
 @NgModule({
