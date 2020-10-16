@@ -37,7 +37,7 @@ describe('DataProviderState', () => {
     let dataProvidersMock: DataProvider[];
     let dataProviderServiceMock: any;
 
-    beforeEach(() => {
+    beforeEach(async () => {
         dataProvidersMock = [];
         for (let i = 0; i < 4; i++) {
             const dataProvider = new DataProvider();
@@ -83,189 +83,132 @@ describe('DataProviderState', () => {
         });
 
         store = TestBed.get(Store);
+        await store.dispatch(new LoadDataProviders());
     });
 
     it('should be initialised', done => {
-        TestBed.get(Actions)
-            .pipe(ofActionCompleted(LoadDataProviders))
-            .pipe(take(1))
-            .subscribe(() => {
-                const initialised = store.selectSnapshot(
-                    DataProviderState.isInitialized
-                );
-                expect(initialised).toBe(true);
+        const initialised = store.selectSnapshot(
+            DataProviderState.isInitialized
+        );
+        expect(initialised).toBe(true);
 
-                done();
-            });
+        done();
     });
 
     it('should load data providers', done => {
-        TestBed.get(Actions)
-            .pipe(ofActionCompleted(LoadDataProviders))
-            .pipe(take(1))
-            .subscribe(() => {
-                const dataProviders = store.selectSnapshot(
-                    DataProviderState.getAll
-                );
-                expect(dataProviders.length).toBe(4);
-                dataProviders.forEach((provider, index) => {
-                    expect(provider).toEqual(dataProvidersMock[index]);
-                });
+        const dataProviders = store.selectSnapshot(DataProviderState.getAll);
+        expect(dataProviders.length).toBe(4);
+        dataProviders.forEach((provider, index) => {
+            expect(provider).toEqual(dataProvidersMock[index]);
+        });
 
-                done();
-            });
+        done();
     });
 
     it('should select only active', done => {
-        TestBed.get(Actions)
-            .pipe(ofActionCompleted(LoadDataProviders))
-            .pipe(take(1))
-            .subscribe(() => {
-                const dataProviders = store.selectSnapshot(
-                    DataProviderState.getActive
-                );
-                expect(dataProviders.length).toBe(1);
-                expect(dataProviders[0]).toEqual(dataProvidersMock[0]);
+        const dataProviders = store.selectSnapshot(DataProviderState.getActive);
+        expect(dataProviders.length).toBe(1);
+        expect(dataProviders[0]).toEqual(dataProvidersMock[0]);
 
-                done();
-            });
+        done();
     });
 
     it('action ToggleDataProvider should toggle active', async done => {
-        TestBed.get(Actions)
-            .pipe(ofActionCompleted(LoadDataProviders))
-            .pipe(take(1))
-            .subscribe(async () => {
-                const previous = store.selectSnapshot(
-                    state => state.dataProvider.dataProviders[2]
-                );
-                expect(previous.isActive).toBe(false);
+        const previous = store.selectSnapshot(
+            state => state.dataProvider.dataProviders[2]
+        );
+        expect(previous.isActive).toBe(false);
 
-                await store
-                    .dispatch(new ToggleDataProvider(dataProvidersMock[2].url))
-                    .toPromise();
-                const active = store.selectSnapshot(
-                    state => state.dataProvider.dataProviders[2]
-                );
-                expect(active.isActive).toBe(true);
+        await store
+            .dispatch(new ToggleDataProvider(dataProvidersMock[2].url))
+            .toPromise();
+        const active = store.selectSnapshot(
+            state => state.dataProvider.dataProviders[2]
+        );
+        expect(active.isActive).toBe(true);
 
-                await store
-                    .dispatch(new ToggleDataProvider(dataProvidersMock[2].url))
-                    .toPromise();
-                const inactive = store.selectSnapshot(
-                    state => state.dataProvider.dataProviders[2]
-                );
-                expect(inactive.isActive).toBe(false);
+        await store
+            .dispatch(new ToggleDataProvider(dataProvidersMock[2].url))
+            .toPromise();
+        const inactive = store.selectSnapshot(
+            state => state.dataProvider.dataProviders[2]
+        );
+        expect(inactive.isActive).toBe(false);
 
-                done();
-            });
+        done();
     });
 
     it('action SetCollectionForSelectedDataProvider', async done => {
         const collectionName = 'TEST_COLLECTION';
-        TestBed.get(Actions)
-            .pipe(ofActionCompleted(LoadDataProviders))
-            .pipe(take(1))
-            .subscribe(async () => {
-                const previousSnapshot = store.snapshot();
-                store.reset({
-                    ...previousSnapshot,
-                    dataProvider: {
-                        ...previousSnapshot.dataProvider,
-                        selected: dataProvidersMock[2]
-                    }
-                });
+        const previousSnapshot = store.snapshot();
+        store.reset({
+            ...previousSnapshot,
+            dataProvider: {
+                ...previousSnapshot.dataProvider,
+                selected: dataProvidersMock[2]
+            }
+        });
 
-                const before = store.selectSnapshot(
-                    state => state.dataProvider
-                );
-                expect(before.selected.collectionId).toBe('');
-                expect(before.dataProviders[2].collectionId).toBe('');
+        const before = store.selectSnapshot(state => state.dataProvider);
+        expect(before.selected.collectionId).toBe('');
+        expect(before.dataProviders[2].collectionId).toBe('');
 
-                await store
-                    .dispatch(
-                        new SetCollectionForSelectedDataProvider(collectionName)
-                    )
-                    .toPromise();
-                const after = store.selectSnapshot(state => state.dataProvider);
-                expect(after.selected.collectionId).toBe(collectionName);
-                expect(after.dataProviders[2].collectionId).toBe(
-                    collectionName
-                );
+        await store
+            .dispatch(new SetCollectionForSelectedDataProvider(collectionName))
+            .toPromise();
+        const after = store.selectSnapshot(state => state.dataProvider);
+        expect(after.selected.collectionId).toBe(collectionName);
+        expect(after.dataProviders[2].collectionId).toBe(collectionName);
 
-                done();
-            });
+        done();
     });
 
     it('action selectDataProvider', async done => {
-        TestBed.get(Actions)
-            .pipe(ofActionCompleted(LoadDataProviders))
-            .pipe(take(1))
-            .subscribe(async () => {
-                const before = store.selectSnapshot(
-                    state => state.dataProvider
-                );
-                expect(before.selected).toBe(null);
+        const before = store.selectSnapshot(state => state.dataProvider);
+        expect(before.selected).toBe(null);
 
-                await store
-                    .dispatch(new SelectDataProvider(dataProvidersMock[0]))
-                    .toPromise();
-                const after = store.selectSnapshot(state => state.dataProvider);
-                expect(after.selected).toBe(dataProvidersMock[0]);
+        await store
+            .dispatch(new SelectDataProvider(dataProvidersMock[0]))
+            .toPromise();
+        const after = store.selectSnapshot(state => state.dataProvider);
+        expect(after.selected).toBe(dataProvidersMock[0]);
 
-                done();
-            });
+        done();
     });
 
     it('action QuickConnectSelectedDataProvider', async done => {
         const service = TestBed.get(DataProviderService);
         spyOn(service, 'connectProvider').and.callThrough();
 
-        TestBed.get(Actions)
-            .pipe(ofActionCompleted(LoadDataProviders))
-            .pipe(take(1))
-            .subscribe(async () => {
-                await store
-                    .dispatch(
-                        new QuickConnectSelectedDataProvider(
-                            dataProvidersMock[0]
-                        )
-                    )
-                    .toPromise();
+        await store
+            .dispatch(
+                new QuickConnectSelectedDataProvider(dataProvidersMock[0])
+            )
+            .toPromise();
 
-                const after = store.selectSnapshot(state => state.dataProvider);
-                expect(after.selected.connection).toBeDefined();
-                expect(after.selected.url).toBe(dataProvidersMock[0].url);
-                expect(service.connectProvider).toHaveBeenCalled();
+        const after = store.selectSnapshot(state => state.dataProvider);
+        expect(after.selected.connection).toBeDefined();
+        expect(after.selected.url).toBe(dataProvidersMock[0].url);
+        expect(service.connectProvider).toHaveBeenCalled();
 
-                done();
-            });
+        done();
     });
 
     it('action AuthenticateDataProvider', async done => {
         const service = TestBed.get(DataProviderService);
         spyOn(service, 'authenticate').and.callThrough();
 
-        TestBed.get(Actions)
-            .pipe(ofActionCompleted(LoadDataProviders))
-            .pipe(take(1))
-            .subscribe(async () => {
-                await store
-                    .dispatch(
-                        new AuthenticateDataProvider(dataProvidersMock[0])
-                    )
-                    .toPromise();
+        await store
+            .dispatch(new AuthenticateDataProvider(dataProvidersMock[0]))
+            .toPromise();
 
-                const after = store.selectSnapshot(state => state.dataProvider);
-                expect(after.dataProviders[0].url).toBe(
-                    dataProvidersMock[0].url
-                );
-                expect(after.dataProviders[0].connection).toBeDefined();
-                expect(after.selected).toBeNull();
-                expect(service.authenticate).toHaveBeenCalled();
+        const after = store.selectSnapshot(state => state.dataProvider);
+        expect(after.dataProviders[0].url).toBe(dataProvidersMock[0].url);
+        expect(after.dataProviders[0].connection).toBeDefined();
+        expect(after.selected).toBeNull();
+        expect(service.authenticate).toHaveBeenCalled();
 
-                done();
-            });
+        done();
     });
 
     it('action AddDataProvider', async done => {
@@ -280,44 +223,34 @@ describe('DataProviderState', () => {
         provider.isPublic = false;
         provider.isAvailable = false;
 
-        TestBed.get(Actions)
-            .pipe(ofActionCompleted(LoadDataProviders))
-            .pipe(take(1))
-            .subscribe(async () => {
-                await store.dispatch(new AddDataProvider(provider)).toPromise();
+        await store.dispatch(new AddDataProvider(provider)).toPromise();
 
-                const after = store.selectSnapshot(state => state.dataProvider);
-                expect(after.dataProviders.length).toBe(5);
-                expect(after.dataProviders[4]).toEqual(provider);
-                expect(service.saveDataProviders).toHaveBeenCalled();
+        const after = store.selectSnapshot(state => state.dataProvider);
+        expect(after.dataProviders.length).toBe(5);
+        expect(after.dataProviders[4]).toEqual(provider);
+        expect(service.saveDataProviders).toHaveBeenCalled();
 
-                done();
-            });
+        done();
     });
 
     it('action RemoveDataProvider', async done => {
         const service = TestBed.get(DataProviderService);
         spyOn(service, 'saveDataProviders').and.callThrough();
 
-        TestBed.get(Actions)
-            .pipe(ofActionCompleted(LoadDataProviders))
-            .pipe(take(1))
-            .subscribe(async () => {
-                await store
-                    .dispatch(new RemoveDataProvider(dataProvidersMock[0]))
-                    .toPromise();
+        await store
+            .dispatch(new RemoveDataProvider(dataProvidersMock[0]))
+            .toPromise();
 
-                const after = store.selectSnapshot(state => state.dataProvider);
-                expect(after.dataProviders.length).toBe(3);
-                for (let i = 0; i < after.dataProviders.length; i++) {
-                    expect(after.dataProviders[i].url).not.toBe(
-                        dataProvidersMock[0].url
-                    );
-                }
-                expect(service.saveDataProviders).toHaveBeenCalled();
+        const after = store.selectSnapshot(state => state.dataProvider);
+        expect(after.dataProviders.length).toBe(3);
+        for (let i = 0; i < after.dataProviders.length; i++) {
+            expect(after.dataProviders[i].url).not.toBe(
+                dataProvidersMock[0].url
+            );
+        }
+        expect(service.saveDataProviders).toHaveBeenCalled();
 
-                done();
-            });
+        done();
     });
 
     it('action SignOutDataProvider', async done => {
@@ -333,35 +266,28 @@ describe('DataProviderState', () => {
         provider.isPublic = false;
         provider.isAvailable = true;
 
-        TestBed.get(Actions)
-            .pipe(ofActionCompleted(LoadDataProviders))
-            .pipe(take(1))
-            .subscribe(async () => {
-                const previousSnapshot = store.snapshot();
-                previousSnapshot.dataProvider.dataProviders.push(provider);
-                store.reset({
-                    ...previousSnapshot,
-                    dataProvider: {
-                        ...previousSnapshot.dataProvider,
-                        selected: provider
-                    }
-                });
+        const previousSnapshot = store.snapshot();
+        previousSnapshot.dataProvider.dataProviders.push(provider);
+        store.reset({
+            ...previousSnapshot,
+            dataProvider: {
+                ...previousSnapshot.dataProvider,
+                selected: provider
+            }
+        });
 
-                await store
-                    .dispatch(new SignOutDataProvider(provider))
-                    .toPromise();
+        await store.dispatch(new SignOutDataProvider(provider)).toPromise();
 
-                const after = store.selectSnapshot(state => state.dataProvider);
+        const after = store.selectSnapshot(state => state.dataProvider);
 
-                expect(after.dataProviders.length).toBe(5);
-                expect(after.dataProviders[4].url).toBe(provider.url);
-                expect(after.dataProviders[4].connection).toBeNull();
-                expect(after.dataProviders[4].isActive).toBeFalsy();
-                expect(after.dataProviders[4].isAvailable).toBeFalsy();
+        expect(after.dataProviders.length).toBe(5);
+        expect(after.dataProviders[4].url).toBe(provider.url);
+        expect(after.dataProviders[4].connection).toBeNull();
+        expect(after.dataProviders[4].isActive).toBeFalsy();
+        expect(after.dataProviders[4].isAvailable).toBeFalsy();
 
-                expect(service.saveDataProviders).toHaveBeenCalled();
+        expect(service.saveDataProviders).toHaveBeenCalled();
 
-                done();
-            });
+        done();
     });
 });
