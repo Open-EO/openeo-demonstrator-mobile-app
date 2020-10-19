@@ -86,6 +86,19 @@ export class MapComponent implements AfterViewInit {
             scene3DOnly: true
         });
 
+        this.cesiumViewer.imageryLayers.add(
+            new Cesium.ImageryLayer(
+                new Cesium.UrlTemplateImageryProvider({
+                    url:
+                        'https://stamen-tiles.a.ssl.fastly.net/terrain-labels/{z}/{x}/{y}.png'
+                }),
+                {
+                    alpha: 1,
+                    contrast: 1.0
+                }
+            )
+        );
+
         this.cesiumViewer.scene.screenSpaceCameraController.enableRotate = true;
         this.cesiumViewer.scene.screenSpaceCameraController.enableTilt = false;
         Cesium.CreditDisplay.cesiumCredit = null;
