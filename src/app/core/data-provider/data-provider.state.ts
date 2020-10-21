@@ -23,6 +23,7 @@ import {
     RemoveDataProvider,
     SaveDataProviders,
     SelectDataProvider,
+    SetBandsForProvider,
     SetCollectionForSelectedDataProvider,
     SignOutDataProvider,
     ToggleDataProvider
@@ -270,5 +271,31 @@ export class DataProviderState {
         });
         ctx.dispatch(new SaveDataProviders());
         ctx.dispatch(new Navigate(['/tabs/open-eo']));
+    }
+
+    @Action(SetBandsForProvider)
+    public async setBandsForProvider(
+        ctx: StateContext<DataProviderStateModel>,
+        action: SetBandsForProvider
+    ) {
+        const providers = Array.from(ctx.getState().dataProviders);
+        let selected = ctx.getState().selected;
+
+        const index = providers.findIndex(
+            provider => provider.url === action.providerUrl
+        );
+        if (index > -1) {
+            providers[index] = { ...providers[index] };
+            providers[index].bands = action.bands;
+
+            if (selected.url === action.providerUrl) {
+                selected = providers[index];
+            }
+        }
+
+        ctx.patchState({
+            dataProviders: providers,
+            selected: selected
+        });
     }
 }

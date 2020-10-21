@@ -20,6 +20,7 @@ import { Select, Store } from '@ngxs/store';
 import { DataProviderState } from '../../core/data-provider/data-provider.state';
 import { Observable, Subscription } from 'rxjs';
 import { Navigate } from '@ngxs/router-plugin';
+import { SetBandsForProvider } from '../../core/data-provider/data-provider.actions';
 
 @Component({
     selector: 'app-bands-setup',
@@ -30,6 +31,7 @@ export class BandsSetupPage implements OnInit, OnDestroy {
     @Select(DataProviderState.getSelected)
     public provider$: Observable<DataProvider>;
     public provider: DataProvider;
+    public model: any;
     public bands: any;
     private providerSubscription: Subscription;
 
@@ -50,11 +52,15 @@ export class BandsSetupPage implements OnInit, OnDestroy {
                     this.provider.collectionId
                 );
                 this.bands = collectionInfo['cube:dimensions'].bands;
+                this.model = { ...this.provider.bands };
             }
         );
     }
 
     ngOnDestroy() {
         this.providerSubscription.unsubscribe();
+        this.store.dispatch(
+            new SetBandsForProvider(this.model, this.provider.url)
+        );
     }
 }

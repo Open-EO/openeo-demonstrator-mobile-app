@@ -65,3 +65,8 @@ export class SetCollectionForSelectedDataProvider {
     static readonly type = '[DataProvider] Set collection for selected';
     constructor(public collection: string) {}
 }
+
+export class SetBandsForProvider {
+    static readonly type = '[DataProvider] Set bands for provider';
+    constructor(public bands: any, public providerUrl: string) {}
+}

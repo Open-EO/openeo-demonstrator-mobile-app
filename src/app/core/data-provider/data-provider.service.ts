@@ -53,6 +53,9 @@ export class DataProviderService {
             if (value.authData) {
                 dataProvider.authData = value.authData;
             }
+            if (value.bands) {
+                dataProvider.bands = value.bands;
+            }
             dataProviders.push(dataProvider);
         }
 
