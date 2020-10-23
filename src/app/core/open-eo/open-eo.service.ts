@@ -15,7 +15,6 @@
  */
 
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
-import { Connection } from '@openeo/js-client';
 import { DataProviderState } from '../data-provider/data-provider.state';
 import { Store } from '@ngxs/store';
 import { EOIndex } from './eo-index';
@@ -26,6 +25,7 @@ import { UpdateIndexData } from '../interest/interest.actions';
 import * as d3 from 'd3';
 import { CustomMessageError } from '../error/custom-message-error';
 import { DataProvider } from '../data-provider/data-provider';
+import { Connection } from '@openeo/js-client/src/connection';
 
 @Injectable({
     providedIn: 'root'

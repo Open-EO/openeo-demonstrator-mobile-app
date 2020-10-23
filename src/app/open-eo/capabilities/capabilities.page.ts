@@ -15,11 +15,11 @@
  */
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Capabilities } from '@openeo/js-client';
 import { Select } from '@ngxs/store';
 import { DataProviderState } from '../../core/data-provider/data-provider.state';
 import { Observable, Subscription } from 'rxjs';
 import { DataProvider } from '../../core/data-provider/data-provider';
+import { Capabilities } from '@openeo/js-client/src/capabilities';
 
 @Component({
     selector: 'app-capabilities',

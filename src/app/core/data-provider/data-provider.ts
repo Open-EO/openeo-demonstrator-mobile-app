@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Connection } from '@openeo/js-client';
 import { AuthData } from '../open-eo/auth-data';
+import { Connection } from '@openeo/js-client/src/connection';
 
 export enum AuthType {
     Anonymous = 'anonymous',
