@@ -16,13 +16,11 @@
 
 import { Injectable } from '@angular/core';
 import { AuthType, DataProvider } from './data-provider';
-import { OpenEO } from '@openeo/js-client';
+import { BasicProvider, Connection, OpenEO } from '@openeo/js-client';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { EnvironmentService } from '../environment/environment.service';
 import { Storage } from '@ionic/storage';
 import { sortBy, unionBy, find } from 'lodash';
-import { BasicProvider } from '@openeo/js-client/src/basicprovider';
-import { Connection } from '@openeo/js-client/src/connection';
 
 @Injectable({
     providedIn: 'root'

@@ -15,7 +15,7 @@
  */
 
 import { AuthData } from '../open-eo/auth-data';
-import { Connection } from '@openeo/js-client/src/connection';
+import { Connection } from '@openeo/js-client';
 
 export enum AuthType {
     Anonymous = 'anonymous',

@@ -25,7 +25,7 @@ import { UpdateIndexData } from '../interest/interest.actions';
 import * as d3 from 'd3';
 import { CustomMessageError } from '../error/custom-message-error';
 import { DataProvider } from '../data-provider/data-provider';
-import { Connection } from '@openeo/js-client/src/connection';
+import { Connection } from '@openeo/js-client';
 
 @Injectable({
     providedIn: 'root'
