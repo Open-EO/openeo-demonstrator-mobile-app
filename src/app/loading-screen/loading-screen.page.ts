@@ -115,6 +115,8 @@ export class LoadingScreenPage implements OnInit {
     }
 
     private async continue() {
-        await this.store.dispatch(new Navigate(['/tabs']));
+        await this.store.dispatch(
+            new Navigate(['/tabs'], null, { replaceUrl: true })
+        );
     }
 }
