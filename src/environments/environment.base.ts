@@ -51,7 +51,7 @@ export const environment: EnvironmentInterface = {
             },
             {
                 name: 'VITO Remote Sensing openEO API',
-                url: 'https://openeo-dev.vito.be/openeo/1.0',
+                url: 'https://openeo.vito.be/openeo/1.0',
                 collectionId: 'TERRASCOPE_S2_TOC_V2',
                 public: true,
                 authType: AuthType.Basic,
