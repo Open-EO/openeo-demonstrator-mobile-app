@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="103" id="ch.solenix.openeo.mobile" ios-CFBundleVersion="3" version="0.1.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="104" id="ch.solenix.openeo.mobile" ios-CFBundleVersion="4" version="0.1.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>openEO</name>
     <description>openEO demonstrator app</description>
     <author email="info@solenix.ch" href="https://www.solenix.ch/">Solenix GmbH</author>
