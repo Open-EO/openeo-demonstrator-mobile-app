@@ -30,6 +30,8 @@ export class DataProvider {
     public authData: AuthData;
     public connection: Connection = null;
     public collectionId = '';
+    public useGeoJSON: boolean;
+    public useLinearScaling: boolean;
     public isDefault = false;
     public isPublic = false;
     public isActive = false;

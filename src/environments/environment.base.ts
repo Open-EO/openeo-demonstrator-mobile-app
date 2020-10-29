@@ -31,12 +31,48 @@ export const environment: EnvironmentInterface = {
         version: '1.0.0',
         servers: [
             {
-                name: 'Default Google Earth',
+                name: 'Google Earth Engine Proxy for openEO',
                 url: 'https://earthengine.openeo.org/v1.0',
                 collectionId: 'COPERNICUS/S2_SR',
                 public: true,
                 authType: AuthType.Basic,
-                authData: new AuthData('group5', 'test123', '')
+                authData: new AuthData('group5', 'test123', ''),
+                bands: {
+                    blue: 'B2',
+                    green: 'B3',
+                    red: 'B4',
+                    nir: 'B8',
+                    swir1: 'B11',
+                    swir2: 'B12',
+                    tcir: 'TCI_R',
+                    tcig: 'TCI_G',
+                    tcib: 'TCI_B'
+                }
+            },
+            {
+                name: 'VITO Remote Sensing openEO API',
+                url: 'https://openeo-dev.vito.be/openeo/1.0',
+                collectionId: 'TERRASCOPE_S2_TOC_V2',
+                public: true,
+                authType: AuthType.Basic,
+                authData: new AuthData(
+                    'solenix_mobile_app',
+                    'solenix_mobile_app123',
+                    ''
+                ),
+                useGeoJSON: true,
+                useLinearScaling: false,
+                bands: {
+                    blue: 'TOC-B02_10M',
+                    green: 'TOC-B03_10M',
+                    red: 'TOC-B04_10M',
+                    nir: 'TOC-B08_10M',
+                    swir1: 'TOC-B11_20M',
+                    swir2: 'TOC-B12_20M',
+                    tcir: 'TOC-B04_10M',
+                    tcig: 'TOC-B03_10M',
+                    tcib: 'TOC-B02_10M'
+                }
             }
         ],
         indices: {

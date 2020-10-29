@@ -15,40 +15,26 @@
  */
 
 import { BoundingBox } from '../../app/core/open-eo/bounding-box';
-import { formatDate } from '@angular/common';
-import { Bands } from '../../app/core/data-provider/bands';
+import { Bands, loadCollection, reduceTemporal, save, scale } from './base';
+import { DataProvider } from '../../app/core/data-provider/data-provider';
 
 export function ndvi(
-    collection: string,
+    dataProvider: DataProvider,
     startDate: Date,
     endDate: Date,
     boundingBox: BoundingBox,
-    geoJson: any,
-    bands: Bands
+    geoJson: any
 ): any {
     return {
         process_graph: {
-            dc: {
-                process_id: 'load_collection',
-                arguments: {
-                    id: collection,
-                    spatial_extent: geoJson,
-                    temporal_extent: [
-                        formatDate(startDate, 'yyyy-MM-dd', 'en'),
-                        formatDate(endDate, 'yyyy-MM-dd', 'en')
-                    ],
-                    bands: [bands.red, bands.nir]
-                }
-            },
-            /*'resample' : {
-                'process_id': 'resample_spatial',
-                'arguments': {
-                    'data': {
-                        'from_node': 'dc'
-                    },
-                    'resolution': resolution
-                }
-            },*/
+            dc: loadCollection(
+                dataProvider,
+                startDate,
+                endDate,
+                boundingBox,
+                geoJson,
+                [Bands.RED, Bands.NIR]
+            ),
             diff: {
                 process_id: 'reduce_dimension',
                 arguments: {
@@ -57,32 +43,32 @@ export function ndvi(
                     },
                     reducer: {
                         process_graph: {
-                            b4: {
+                            red: {
                                 process_id: 'array_element',
                                 arguments: {
                                     data: {
                                         from_parameter: 'data'
                                     },
-                                    label: 'B4'
+                                    index: 0
                                 }
                             },
-                            b8: {
+                            nir: {
                                 process_id: 'array_element',
                                 arguments: {
                                     data: {
                                         from_parameter: 'data'
                                     },
-                                    label: 'B8'
+                                    index: 1
                                 }
                             },
                             diff: {
                                 process_id: 'normalized_difference',
                                 arguments: {
                                     x: {
-                                        from_node: 'b8'
+                                        from_node: 'nir'
                                     },
                                     y: {
-                                        from_node: 'b4'
+                                        from_node: 'red'
                                     }
                                 },
                                 result: true
@@ -92,63 +78,9 @@ export function ndvi(
                     dimension: 'bands'
                 }
             },
-            reduce: {
-                process_id: 'reduce_dimension',
-                arguments: {
-                    data: {
-                        from_node: 'diff'
-                    },
-                    reducer: {
-                        process_graph: {
-                            min: {
-                                arguments: {
-                                    data: {
-                                        from_parameter: 'data'
-                                    }
-                                },
-                                process_id: 'mean',
-                                result: true
-                            }
-                        }
-                    },
-                    dimension: 't'
-                }
-            },
-            scale: {
-                process_id: 'apply',
-                arguments: {
-                    data: {
-                        from_node: 'reduce'
-                    },
-                    process: {
-                        process_graph: {
-                            lsr: {
-                                arguments: {
-                                    x: {
-                                        from_parameter: 'x'
-                                    },
-                                    inputMin: -1,
-                                    inputMax: 1,
-                                    outputMin: 0,
-                                    outputMax: 255
-                                },
-                                process_id: 'linear_scale_range',
-                                result: true
-                            }
-                        }
-                    }
-                }
-            },
-            save: {
-                process_id: 'save_result',
-                arguments: {
-                    data: {
-                        from_node: 'scale'
-                    },
-                    format: 'PNG'
-                },
-                result: true
-            }
+            reduce: reduceTemporal('diff'),
+            scale: scale(dataProvider),
+            save: save(dataProvider)
         }
     };
 }

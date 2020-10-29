@@ -222,12 +222,11 @@ export class OpenEOService {
             }
 
             processGraph = index.processGraph(
-                dataProviders[i].collectionId,
+                dataProviders[i],
                 startDate,
                 endDate,
                 location.boundingBox,
-                location.geoJson,
-                dataProviders[i].bands
+                location.geoJson
             );
 
             const errors = await this.validateProcessGraph(

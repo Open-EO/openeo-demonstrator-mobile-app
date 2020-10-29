@@ -47,6 +47,8 @@ export class DataProviderService {
             dataProvider.isPublic = value.public;
             dataProvider.isActive = value.public;
             dataProvider.isAvailable = value.public;
+            dataProvider.useGeoJSON = value.useGeoJSON !== false;
+            dataProvider.useLinearScaling = value.useLinearScaling !== false;
             if (value.authType) {
                 dataProvider.authType = value.authType;
             }
@@ -183,8 +185,6 @@ export class DataProviderService {
                 // TODO: OIDC Authentication
                 // const oidcAuthProvider = find(authProviders, (authProvider) => (authProvider instanceof BasicProvider));
                 // await oidcAuthProvider.login();
-
-                await connection.authenticateOIDC(provider.authData.token);
                 break;
         }
 

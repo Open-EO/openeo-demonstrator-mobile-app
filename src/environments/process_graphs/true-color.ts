@@ -15,92 +15,33 @@
  */
 
 import { BoundingBox } from '../../app/core/open-eo/bounding-box';
-import { formatDate } from '@angular/common';
-import { Bands } from '../../app/core/data-provider/bands';
+import { DataProvider } from '../../app/core/data-provider/data-provider';
+import { Bands, loadCollection, reduceTemporal, save, scale } from './base';
 
 export function trueColor(
-    collection: string,
+    dataProvider: DataProvider,
     startDate: Date,
     endDate: Date,
     boundingBox: BoundingBox,
-    geoJson: any,
-    bands: Bands
+    geoJson: any
 ): any {
     return {
         process_graph: {
-            dc: {
-                process_id: 'load_collection',
-                arguments: {
-                    id: collection,
-                    spatial_extent: geoJson,
-                    temporal_extent: [
-                        formatDate(startDate, 'yyyy-MM-dd', 'en'),
-                        formatDate(endDate, 'yyyy-MM-dd', 'en')
-                    ],
-                    bands: [bands.tcir, bands.tcig, bands.tcib]
-                }
-            },
-            reduce: {
-                process_id: 'reduce_dimension',
-                arguments: {
-                    data: {
-                        from_node: 'dc'
-                    },
-                    reducer: {
-                        process_graph: {
-                            min: {
-                                arguments: {
-                                    data: {
-                                        from_parameter: 'data'
-                                    }
-                                },
-                                process_id: 'min',
-                                result: true
-                            }
-                        }
-                    },
-                    dimension: 't'
-                }
-            },
-            apply: {
-                process_id: 'apply',
-                arguments: {
-                    data: {
-                        from_node: 'reduce'
-                    },
-                    process: {
-                        process_graph: {
-                            '2': {
-                                process_id: 'linear_scale_range',
-                                arguments: {
-                                    x: {
-                                        from_parameter: 'x'
-                                    },
-                                    inputMin: 0,
-                                    inputMax: 255,
-                                    outputMax: 255
-                                },
-                                result: true
-                            }
-                        }
-                    }
-                }
-            },
-            save: {
-                process_id: 'save_result',
-                arguments: {
-                    data: {
-                        from_node: 'apply'
-                    },
-                    format: 'PNG',
-                    options: {
-                        red: 'TCI_R',
-                        blue: 'TCI_B',
-                        green: 'TCI_G'
-                    }
-                },
-                result: true
-            }
+            dc: loadCollection(
+                dataProvider,
+                startDate,
+                endDate,
+                boundingBox,
+                geoJson,
+                [Bands.RED, Bands.GREEN, Bands.BLUE]
+            ),
+            reduce: reduceTemporal('dc'),
+            scale: scale(dataProvider, 'reduce', 0, 3000),
+            save: save(
+                dataProvider,
+                [Bands.RED, Bands.GREEN, Bands.BLUE],
+                'scale'
+            )
         }
     };
 }
