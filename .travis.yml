@@ -19,6 +19,7 @@ jobs:
     - script: npm run prettier:check
     - stage: build
       os: osx
+      osx_image: xcode12.2
       script: npm run build-ios
     - language: android
       dist: trusty
