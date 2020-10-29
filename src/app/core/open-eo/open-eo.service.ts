@@ -229,12 +229,18 @@ export class OpenEOService {
                 location.geoJson
             );
 
-            const errors = await this.validateProcessGraph(
-                dataProviders[i].connection,
-                processGraph
-            );
+            let validationErrors = [];
+            const capabilities = dataProviders[i].connection.capabilities();
+            if (
+                capabilities.features[capabilities.featureMap.validateProcess]
+            ) {
+                validationErrors = await this.validateProcessGraph(
+                    dataProviders[i].connection,
+                    processGraph
+                );
+            }
 
-            if (errors.length === 0) {
+            if (validationErrors.length === 0) {
                 dataProviderToUse = dataProviders[i];
                 break;
             } else {
@@ -242,7 +248,7 @@ export class OpenEOService {
                     'Invalid process graph',
                     dataProviders[i],
                     processGraph,
-                    errors
+                    validationErrors
                 ]);
             }
         }

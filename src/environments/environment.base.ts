@@ -60,7 +60,7 @@ export const environment: EnvironmentInterface = {
                     'solenix_mobile_app123',
                     ''
                 ),
-                useGeoJSON: true,
+                useGeoJSON: false,
                 useLinearScaling: false,
                 bands: {
                     blue: 'TOC-B02_10M',
