@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="104" id="ch.solenix.openeo.mobile" ios-CFBundleVersion="4" version="0.1.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="105" id="ch.solenix.openeo.mobile" ios-CFBundleVersion="5" version="0.1.4" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>openEO</name>
     <description>openEO demonstrator app</description>
     <author email="info@solenix.ch" href="https://www.solenix.ch/">Solenix GmbH</author>
@@ -103,7 +103,6 @@
     <plugin name="cordova-plugin-device" spec="^2.0.2" />
     <hook src="scripts/before-build.js" type="before_build" />
     <hook src="scripts/after-build.js" type="after_build" />
-    <allow-navigation href="https://192.168.1.173:8100" sessionid="3f2d596c" />
     <plugin name="cordova-plugin-statusbar" spec="2.4.3" />
     <plugin name="cordova-plugin-splashscreen" spec="6.0.0" />
     <plugin name="cordova-plugin-ionic-keyboard" spec="2.2.0" />
