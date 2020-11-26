@@ -231,9 +231,8 @@ export class OpenEOService {
 
             let validationErrors = [];
             const capabilities = dataProviders[i].connection.capabilities();
-            if (
-                capabilities.features[capabilities.featureMap.validateProcess]
-            ) {
+
+            if (capabilities.hasFeature('validateProcess')) {
                 validationErrors = await this.validateProcessGraph(
                     dataProviders[i].connection,
                     processGraph
